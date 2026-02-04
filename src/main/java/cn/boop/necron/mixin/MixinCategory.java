@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Category.class)
 public class MixinCategory {
+
     @Inject(method = "<clinit>", at = @At("TAIL"))
     private static void injectNecronCategory(CallbackInfo ci) {
         Category.Companion.custom("Necron");

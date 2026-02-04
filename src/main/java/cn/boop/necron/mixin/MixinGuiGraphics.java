@@ -15,7 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GuiGraphics.class)
 public class MixinGuiGraphics {
-    @Unique ItemStack itemStack;
+    @Unique
+    ItemStack itemStack;
 
     @Unique
     private static boolean isSkyBlockItem(ItemStack stack) {
