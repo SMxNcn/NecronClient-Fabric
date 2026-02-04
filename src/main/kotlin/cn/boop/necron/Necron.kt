@@ -6,6 +6,7 @@ import cn.boop.necron.features.impl.necron.AutoCloseChest
 import cn.boop.necron.features.impl.necron.AutoGFS
 import cn.boop.necron.features.impl.necron.AutoLeap
 import cn.boop.necron.features.impl.necron.B64Chat
+import cn.boop.necron.features.impl.necron.DungeonESP
 import cn.boop.necron.features.impl.necron.Etherwarp
 import cn.boop.necron.features.impl.necron.FuckDiorite
 import cn.boop.necron.features.impl.necron.ItemStarDisplay
@@ -26,7 +27,7 @@ object Necron : ClientModInitializer {
         listOf(this).forEach { EventBus.subscribe(it) }
 
         ModuleManager.registerModules(ModuleConfig("necron.json"),
-            AutoClicker, AutoCloseChest, AutoGFS, AutoLeap, B64Chat, Etherwarp, FuckDiorite, ItemStarDisplay, TitleManager)
+            AutoClicker, AutoCloseChest, AutoGFS, AutoLeap, B64Chat, DungeonESP, Etherwarp, FuckDiorite, ItemStarDisplay, TitleManager)
 
         ClientTickEvents.START_CLIENT_TICK.register { _ ->
             if (TitleManager.enabled) {
