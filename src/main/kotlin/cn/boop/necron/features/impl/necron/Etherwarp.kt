@@ -45,15 +45,15 @@ object Etherwarp : Module(
         if (!isInSkyblock || mc.player == null || mc.screen != null) return
 
         val currentTime = System.currentTimeMillis()
-        if (currentTime - lastLeftClickTime < 250) return
+        if (currentTime - lastLeftClickTime < 150) return
 
         executor.submit {
             try {
                 lastLeftClickTime = System.currentTimeMillis()
                 mc.options.keyShift.isDown = true
-                Thread.sleep(200)
+                Thread.sleep(100)
                 rightClick()
-                Thread.sleep(20)
+                Thread.sleep(50)
                 mc.options.keyShift.isDown = false
             } catch (_: Exception) {}
         }
