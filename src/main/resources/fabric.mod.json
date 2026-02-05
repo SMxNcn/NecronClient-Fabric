@@ -3,9 +3,11 @@
   "id": "necronclient",
   "version": "${version}",
   "name": "NecronClient (OA)",
-  "description": "",
-  "authors": [],
-  "contact": {},
+  "description": "A SkyBlock Mod, but on Fabric (Base on OdinAddon)",
+  "authors": ["SMxNcn"],
+  "contact": {
+    "sources": "https://github.com/SMxNcn/NecronClient-Fabric"
+  },
   "license": "BSD-3-Clause",
   "icon": "assets/necron/icon.png",
   "environment": "client",
