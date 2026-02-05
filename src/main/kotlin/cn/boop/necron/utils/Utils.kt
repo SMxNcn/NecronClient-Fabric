@@ -15,6 +15,10 @@ fun modMessage(message: Any?, prefix: String = "§bNecron §8»§r ", chatStyle:
     else mc.execute { mc.gui?.chat?.addMessage(text) }
 }
 
+fun String.removeFormatting(): String {
+    return this.replace(Regex("§[0-9a-fk-or]"), "")
+}
+
 fun Component.removeFormattingToString(): String {
     return this.string.replace(Regex("§[0-9a-fk-or]"), "")
 }
