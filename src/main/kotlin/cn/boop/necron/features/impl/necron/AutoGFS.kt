@@ -27,6 +27,8 @@ object AutoGFS : Module(
     private val timerIncrements by NumberSetting("Timer Increments", 5, 1, 60, desc = "The interval in which to refill.", unit = "s")
 
     private val startRegex = Regex("\\[NPC] Mort: Here, I found this map when I first entered the dungeon\\.|\\[NPC] Mort: Right-click the Orb for spells, and Left-click \\(or Drop\\) to use your Ultimate!")
+    private val refillQueue = mutableListOf<RefillItem>()
+    private var isProcessingQueue = false
 
     init {
         scheduleRefill()
@@ -51,10 +53,35 @@ object AutoGFS : Module(
         if (!((inKuudra && KuudraUtils.inKuudra) || (inDungeon && DungeonUtils.inDungeons))) return
         val inventory = mc.player?.inventory ?: return
 
-        inventory.find { it?.itemId == "ENDER_PEARL" }?.takeIf { refillPearl }?.also { fillItemFromSack(16, "ENDER_PEARL", "ender_pearl", false) }
+        inventory.find { it?.itemId == "ENDER_PEARL" }?.takeIf { refillPearl }?.also { refillQueue.add(RefillItem(16, "ENDER_PEARL", "ender_pearl", false)) }
 
-        inventory.find { it?.itemId == "INFLATABLE_JERRY" }?.takeIf { refillJerry }?.also { fillItemFromSack(64, "INFLATABLE_JERRY", "inflatable_jerry", false) }
+        inventory.find { it?.itemId == "INFLATABLE_JERRY" }?.takeIf { refillJerry }?.also { refillQueue.add(RefillItem(64, "INFLATABLE_JERRY", "inflatable_jerry", false)) }
 
-        inventory.find { it?.itemId == "SUPERBOOM_TNT" }.takeIf { refillTNT }?.also { fillItemFromSack(64, "SUPERBOOM_TNT", "superboom_tnt", false) }
+        inventory.find { it?.itemId == "SUPERBOOM_TNT" }.takeIf { refillTNT }?.also { refillQueue.add(RefillItem(64, "SUPERBOOM_TNT", "superboom_tnt", false)) }
+
+        if (refillQueue.isNotEmpty() && !isProcessingQueue) processNextItem()
     }
+
+    private fun processNextItem() {
+        if (refillQueue.isEmpty()) {
+            isProcessingQueue = false
+            return
+        }
+
+        isProcessingQueue = true
+        val item = refillQueue.removeFirst()
+
+        fillItemFromSack(item.amount, item.itemId, item.sackName, item.ignoreNBT)
+
+        schedule(40) {
+            processNextItem()
+        }
+    }
+
+    private data class RefillItem(
+        val amount: Int,
+        val itemId: String,
+        val sackName: String,
+        val ignoreNBT: Boolean
+    )
 }
