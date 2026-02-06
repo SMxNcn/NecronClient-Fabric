@@ -59,7 +59,7 @@ object RerollProtector : Module(
 
     init {
         on<GuiEvent.Open> {
-            if (!enabled && !DungeonUtils.inDungeons) return@on
+            if (!enabled || !DungeonUtils.inDungeons) return@on
             val chest = (screen as? AbstractContainerScreen<*>) ?: return@on
             if (lastCheckedChest != chest.title.string) {
                 hasShownMessage = false
@@ -125,13 +125,13 @@ object RerollProtector : Module(
     }
 
     private fun sendMessage(itemName: String, chestName: String) {
-        val cleanItemName = itemName.removeFormatting().replace("[", "").replace("]", "").trim()
-        val chatMessage = message.replace("%i", cleanItemName).replace("%c", chestName)
+        val rawItemName = itemName.replace("[", "").replace("]", "").trim()
+        val chatMessage = message.replace("%i", rawItemName).replace("%c", chestName)
 
         val formattedChestName = getChestColor(chestName)
 
-        if (sendRngMessage) sendCommand("pc NC » $chatMessage")
-        modMessage("§dRng Item §7dropped! §6$cleanItemName §7($formattedChestName§7)")
+        if (sendRngMessage) sendCommand("pc NC » ${chatMessage.removeFormatting()}")
+        modMessage("§dRng Item §7in $formattedChestName§7! ($rawItemName§7)")
     }
 
     private fun isRareItem(itemName: String): Boolean {
