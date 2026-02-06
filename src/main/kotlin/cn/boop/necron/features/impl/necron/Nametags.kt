@@ -12,11 +12,14 @@ import com.odtheking.odin.features.Module
 import com.odtheking.odin.utils.Color
 import com.odtheking.odin.utils.render.drawStyledBox
 import com.odtheking.odin.utils.render.drawText
+import com.odtheking.odin.utils.renderBoundingBox
+import com.odtheking.odin.utils.renderX
+import com.odtheking.odin.utils.renderY
+import com.odtheking.odin.utils.renderZ
 import com.odtheking.odin.utils.skyblock.Island
 import com.odtheking.odin.utils.skyblock.LocationUtils
 import com.odtheking.odin.utils.skyblock.dungeon.DungeonClass
 import com.odtheking.odin.utils.skyblock.dungeon.DungeonUtils
-import net.minecraft.util.Mth
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.phys.Vec3
 
@@ -44,25 +47,20 @@ object Nametags : Module(
 
                 val distance = player.distanceTo(entity)
 
-                val partialTicks = mc.deltaTracker.getGameTimeDeltaPartialTick(true)
-                val lerpedX = Mth.lerp(partialTicks.toDouble(), entity.xo, entity.x)
-                val lerpedY = Mth.lerp(partialTicks.toDouble(), entity.yo, entity.y)
-                val lerpedZ = Mth.lerp(partialTicks.toDouble(), entity.zo, entity.z)
-
                 val nametagText = buildNametagText(entity, distance.toInt())
-                val yOffset = if (entity.isCrouching) 0.7 else 0.9
-                val renderPos = Vec3(lerpedX, lerpedY + entity.eyeHeight + yOffset, lerpedZ)
+                val scale = calculateScale(distance)
+                val yOffset = if (entity.isCrouching) 0.6 + scale / 5f else 0.8 + scale / 5f
+                val renderPos = Vec3(entity.renderX, entity.renderY + entity.eyeHeight + yOffset, entity.renderZ)
 
-                drawText(text = nametagText, pos = renderPos, scale = calculateScale(distance), depth = false)
+                drawText(text = nametagText, pos = renderPos, scale = scale, depth = false)
 
                 if (teammateESP && DungeonUtils.inDungeons && entity != mc.player) {
                     val playerName = entity.name.string
                     val dungeonPlayer = DungeonUtils.dungeonTeammates.find { it.name == playerName }
-                    val boundingBox = entity.boundingBox.move(lerpedX - entity.x, lerpedY - entity.y, lerpedZ - entity.z)
 
                     dungeonPlayer?.let { dp ->
                         val color = getDungeonClassColor(dp.clazz)
-                        drawStyledBox(aabb = boundingBox, color = color, style = 1, depth = false)
+                        drawStyledBox(aabb = entity.renderBoundingBox, color = color, style = 1, depth = false)
                     }
                 }
             }
