@@ -14,7 +14,8 @@
     "KeyMappingAccessor",
     "MixinCategory",
     "MixinChatComponent",
+    "MixinEntity",
     "MixinGuiGraphics",
-    "MixinMinecraft"
+    "MixinLivingEntityRenderer"
   ]
 }
