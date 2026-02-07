@@ -13,6 +13,7 @@ import com.odtheking.odin.features.Module
 import com.odtheking.odin.utils.equalsOneOf
 import com.odtheking.odin.utils.handlers.schedule
 import com.odtheking.odin.utils.sendCommand
+import com.odtheking.odin.utils.skyblock.KuudraUtils
 import com.odtheking.odin.utils.skyblock.dungeon.DungeonUtils
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.world.Container
@@ -59,7 +60,7 @@ object RerollProtector : Module(
 
     init {
         on<GuiEvent.Open> {
-            if (!enabled || !DungeonUtils.inDungeons) return@on
+            if (!enabled || !DungeonUtils.inDungeons || KuudraUtils.inKuudra) return@on
             val chest = (screen as? AbstractContainerScreen<*>) ?: return@on
             if (lastCheckedChest != chest.title.string) {
                 hasShownMessage = false
