@@ -5,6 +5,7 @@ import cn.boop.necron.features.impl.necron.AutoClicker
 import cn.boop.necron.features.impl.necron.AutoCloseChest
 import cn.boop.necron.features.impl.necron.AutoGFS
 import cn.boop.necron.features.impl.necron.AutoLeap
+import cn.boop.necron.features.impl.necron.AutoSell
 import cn.boop.necron.features.impl.necron.AutoSwap
 import cn.boop.necron.features.impl.necron.B64Chat
 import cn.boop.necron.features.impl.necron.DungeonESP
@@ -27,13 +28,13 @@ object Necron : ClientModInitializer {
 
     override fun onInitializeClient() {
         ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->
-            arrayOf(necronChatCommand).forEach { commodore -> commodore.register(dispatcher) }
+            arrayOf(autoSellCommand, necronChatCommand/*, necronCommand*/).forEach { commodore -> commodore.register(dispatcher) }
         }
 
         listOf(this).forEach { EventBus.subscribe(it) }
 
         ModuleManager.registerModules(config,
-            AutoClicker, AutoCloseChest, AutoGFS, AutoLeap, AutoTerms, AutoSwap, B64Chat, DungeonESP, Etherwarp, FuckDiorite, ItemStarDisplay,
+            AutoClicker, AutoCloseChest, AutoGFS, AutoLeap, AutoSell, AutoTerms, AutoSwap, B64Chat, DungeonESP, Etherwarp, FuckDiorite, ItemStarDisplay,
             Nametags, RerollProtector, TitleManager)
 
         ClientTickEvents.START_CLIENT_TICK.register { _ ->
