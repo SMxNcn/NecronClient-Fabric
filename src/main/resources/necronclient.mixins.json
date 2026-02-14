@@ -12,10 +12,12 @@
   },
   "client": [
     "KeyMappingAccessor",
-    "MixinCategory",
     "MixinChatComponent",
     "MixinEntity",
     "MixinGuiGraphics",
-    "MixinLivingEntityRenderer"
+    "MixinLivingEntityRenderer",
+    "terminals.MixinPanesHandler",
+    "terminals.MixinSelectAllHandler",
+    "terminals.MixinStartsWithHandler"
   ]
 }

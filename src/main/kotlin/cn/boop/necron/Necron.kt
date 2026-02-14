@@ -13,6 +13,7 @@ import cn.boop.necron.features.impl.necron.FuckDiorite
 import cn.boop.necron.features.impl.necron.ItemStarDisplay
 import cn.boop.necron.features.impl.necron.RerollProtector
 import cn.boop.necron.features.impl.necron.Nametags
+import cn.boop.necron.features.impl.necron.AutoTerms
 import cn.boop.necron.features.impl.necron.TitleManager
 import com.odtheking.odin.config.ModuleConfig
 import com.odtheking.odin.events.core.EventBus
@@ -22,6 +23,8 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 
 object Necron : ClientModInitializer {
+    val config = ModuleConfig("necron.json")
+
     override fun onInitializeClient() {
         ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->
             arrayOf(necronChatCommand).forEach { commodore -> commodore.register(dispatcher) }
@@ -29,8 +32,8 @@ object Necron : ClientModInitializer {
 
         listOf(this).forEach { EventBus.subscribe(it) }
 
-        ModuleManager.registerModules(ModuleConfig("necron.json"),
-            AutoClicker, AutoCloseChest, AutoGFS, AutoLeap, AutoSwap, B64Chat, DungeonESP, Etherwarp, FuckDiorite, ItemStarDisplay,
+        ModuleManager.registerModules(config,
+            AutoClicker, AutoCloseChest, AutoGFS, AutoLeap, AutoTerms, AutoSwap, B64Chat, DungeonESP, Etherwarp, FuckDiorite, ItemStarDisplay,
             Nametags, RerollProtector, TitleManager)
 
         ClientTickEvents.START_CLIENT_TICK.register { _ ->
