@@ -1,8 +1,11 @@
 package cn.boop.necron
 
+import cn.boop.necron.commands.autoSellCommand
 import cn.boop.necron.commands.necronChatCommand
 import cn.boop.necron.features.impl.necron.AutoClicker
 import cn.boop.necron.features.impl.necron.AutoCloseChest
+import cn.boop.necron.features.impl.necron.AutoExperiments
+import cn.boop.necron.features.impl.necron.AutoFish
 import cn.boop.necron.features.impl.necron.AutoGFS
 import cn.boop.necron.features.impl.necron.AutoLeap
 import cn.boop.necron.features.impl.necron.AutoSell
@@ -34,8 +37,8 @@ object Necron : ClientModInitializer {
         listOf(this).forEach { EventBus.subscribe(it) }
 
         ModuleManager.registerModules(config,
-            AutoClicker, AutoCloseChest, AutoGFS, AutoLeap, AutoSell, AutoTerms, AutoSwap, B64Chat, DungeonESP, Etherwarp, FuckDiorite, ItemStarDisplay,
-            Nametags, RerollProtector, TitleManager)
+            AutoClicker, AutoCloseChest, AutoExperiments, AutoFish, AutoGFS, AutoLeap, AutoSell, AutoTerms, AutoSwap, B64Chat, DungeonESP, Etherwarp, FuckDiorite,
+            ItemStarDisplay, Nametags, RerollProtector, TitleManager)
 
         ClientTickEvents.START_CLIENT_TICK.register { _ ->
             if (TitleManager.enabled) {
