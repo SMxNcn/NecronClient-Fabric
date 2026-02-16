@@ -1,5 +1,5 @@
 # NecronClient (OA)
-基于 [OdinAddon](https://github.com/odtheking/OdinAddon) 开发
+基于 [OdinAddon](https://github.com/odtheking/OdinAddon) 开发，并移植了 [NecronClient](https://github.com/SMxNcn/NecronClient) 的部分功能
 
 并通过修改过的 [OdinFabric](https://github.com/SMxNcn/OdinFabric) 实现了部分OdinClient功能
 
