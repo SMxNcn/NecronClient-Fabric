@@ -16,7 +16,6 @@ object B64Chat : Module(
     description = "Base 64 chatting.",
     category = NCategory.NECRON
 ) {
-    var hideMessage by BooleanSetting("Hide Message", true, desc = "Remove chat line that contains origin message.")
     private val hideMessage by BooleanSetting("Hide Message", true, desc = "Remove chat line that contains origin message.")
 
     init {
