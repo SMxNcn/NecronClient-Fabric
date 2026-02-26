@@ -14,6 +14,7 @@ import java.util.List;
 
 @Mixin(SelectAllHandler.class)
 public class MixinSelectAllHandler {
+
     @Inject(method = "solve(Ljava/util/List;)Ljava/util/List;", at = @At("RETURN"), cancellable = true)
     private void onSolve(List<ItemStack> items, CallbackInfoReturnable<List<Integer>> cir) {
         if (AutoTerms.INSTANCE.shouldShuffleSolution()) {

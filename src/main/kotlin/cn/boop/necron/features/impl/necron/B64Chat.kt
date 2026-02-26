@@ -17,6 +17,7 @@ object B64Chat : Module(
     category = NCategory.NECRON
 ) {
     var hideMessage by BooleanSetting("Hide Message", true, desc = "Remove chat line that contains origin message.")
+    private val hideMessage by BooleanSetting("Hide Message", true, desc = "Remove chat line that contains origin message.")
 
     init {
         on<ChatPacketEvent> {
@@ -34,5 +35,9 @@ object B64Chat : Module(
                 }
             }
         }
+    }
+
+    fun shouldHideMessage(): Boolean {
+        return enabled && hideMessage
     }
 }

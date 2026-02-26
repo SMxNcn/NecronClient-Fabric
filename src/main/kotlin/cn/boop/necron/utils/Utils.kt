@@ -12,6 +12,8 @@ import net.minecraft.world.inventory.ClickType
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 
+val tickDelta = mc.deltaTracker.getGameTimeDeltaPartialTick(true)
+
 fun modMessage(message: Any?, prefix: String = "§bNecron §8»§r ", chatStyle: Style? = null) {
     val text = Component.literal("$prefix$message")
     chatStyle?.let { text.setStyle(chatStyle) }

@@ -26,7 +26,8 @@ object AutoTerms : Module(
 
     init {
         on<GuiEvent.DrawBackground> {
-            with (TerminalUtils.currentTerm ?: return@on) {
+            val term = TerminalUtils.currentTerm ?: return@on
+            with (term) {
                 if (firstClick && (System.currentTimeMillis() - lastClickTime < firstClickDelay)) return@on
                 if (System.currentTimeMillis() - lastClickTime < autoDelay + (0..100).random()) return@on
                 if (System.currentTimeMillis() - lastClickTime > breakThreshold) isClicked = false

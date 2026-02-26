@@ -27,6 +27,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 
 object Necron : ClientModInitializer {
+    val LOGGER: Logger = LoggerFactory.getLogger(Necron.javaClass)
     val config = ModuleConfig("necron.json")
 
     override fun onInitializeClient() {

@@ -33,7 +33,7 @@ object TitleManager : Module (
 
     fun buildTitle(): String {
         val sb = StringBuilder(titleText)
-        val locationText = LocationUtils.currentArea.name
+        val locationText = LocationUtils.currentArea.displayName
         val playerName = OdinMod.mc.player?.name?.string
         if (displayLocation && !locationText.contains("Unknown")) sb.append(" | ").append(locationText)
         if (displayPlayer && playerName != null) sb.append(" | ").append(playerName)

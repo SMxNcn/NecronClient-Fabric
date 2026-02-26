@@ -17,7 +17,7 @@ public class MixinChatComponent {
 
         String text = message.getString();
         var component = Component.literal(text).getString().replaceAll("§[0-9a-fk-or]", "").trim();
-        if (B64Chat.INSTANCE.getEnabled() && B64Chat.INSTANCE.getHideMessage() && component.contains("::") && component.endsWith("%]")) {
+        if (B64Chat.INSTANCE.shouldHideMessage() && component.contains("::") && component.endsWith("%]")) {
             ci.cancel();
         }
     }

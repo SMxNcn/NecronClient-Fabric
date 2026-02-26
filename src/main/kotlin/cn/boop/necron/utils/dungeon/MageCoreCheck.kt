@@ -15,15 +15,8 @@ object MageCoreCheck {
             mageEntity.z.toInt()
         )
 
-        val minX = minOf(57, 51)
-        val maxX = maxOf(57, 51)
-        val minY = minOf(120, 114)
-        val maxY = maxOf(120, 114)
-        val minZ = minOf(53, 51)
-        val maxZ = maxOf(53, 51)
-
-        return magePos.x in minX..maxX &&
-                magePos.y in minY..maxY &&
-                magePos.z in minZ..maxZ
+        return magePos.x in 51..57 &&
+                magePos.y in 114..120 &&
+                magePos.z in 51..53
     }
 }

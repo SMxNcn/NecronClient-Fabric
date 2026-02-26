@@ -47,6 +47,7 @@ object RerollProtector : Module(
         "Necron Dye",
         "Livid Dye",
         "Master Skull - Tier 5",
+        "Spirit Mask",
         "Fifth Master Star",
         "Fourth Master Star",
         "Third Master Star",
@@ -60,7 +61,7 @@ object RerollProtector : Module(
 
     init {
         on<GuiEvent.Open> {
-            if (!enabled || !DungeonUtils.inDungeons || KuudraUtils.inKuudra) return@on
+            if (!enabled || !DungeonUtils.inDungeons || !KuudraUtils.inKuudra) return@on
             val chest = (screen as? AbstractContainerScreen<*>) ?: return@on
             if (lastCheckedChest != chest.title.string) {
                 hasShownMessage = false
@@ -116,7 +117,7 @@ object RerollProtector : Module(
                 if (isRareItem(cleanName)) {
                     rareItemSlot = i
                     lastRareItemName = cleanName
-                    lastRawItemName = stack.displayName.toLegacyString()
+                    lastRawItemName = stack.displayName.toLegacyString().replace("[", "").replace("]", "")
                     return true
                 }
             }
