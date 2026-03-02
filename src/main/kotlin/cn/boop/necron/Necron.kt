@@ -2,6 +2,7 @@ package cn.boop.necron
 
 import cn.boop.necron.commands.autoSellCommand
 import cn.boop.necron.commands.necronChatCommand
+import cn.boop.necron.features.impl.necron.Auto4
 import cn.boop.necron.features.impl.necron.AutoClicker
 import cn.boop.necron.features.impl.necron.AutoCloseChest
 import cn.boop.necron.features.impl.necron.AutoExperiments
