@@ -25,9 +25,11 @@ import com.odtheking.odin.features.ModuleManager
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 object Necron : ClientModInitializer {
-    val LOGGER: Logger = LoggerFactory.getLogger(Necron.javaClass)
+    val logger: Logger = LogManager.getLogger(Necron.javaClass)
     val config = ModuleConfig("necron.json")
 
     override fun onInitializeClient() {
@@ -38,7 +40,7 @@ object Necron : ClientModInitializer {
         listOf(this).forEach { EventBus.subscribe(it) }
 
         ModuleManager.registerModules(config,
-            AutoClicker, AutoCloseChest, AutoExperiments, AutoFish, AutoGFS, AutoLeap, AutoSell, AutoTerms, AutoSwap, B64Chat, DungeonESP, Etherwarp, FuckDiorite,
+            Auto4, AutoClicker, AutoCloseChest, AutoExperiments, AutoFish, AutoGFS, AutoLeap, AutoSell, AutoTerms, AutoSwap, B64Chat, DungeonESP, Etherwarp, FuckDiorite,
             ItemStarDisplay, Nametags, RerollProtector, TitleManager)
 
         ClientTickEvents.START_CLIENT_TICK.register { _ ->

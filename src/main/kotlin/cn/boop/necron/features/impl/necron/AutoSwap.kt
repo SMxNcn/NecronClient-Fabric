@@ -35,7 +35,9 @@ object AutoSwap : Module(
                 value.matches(bonzoRegex) -> {
                     actionExecutor.submit {
                         try {
-                            Thread.sleep(2000 + (0L..199L).random())
+                            Thread.sleep(100 + (0L..99L).random())
+                            if (Auto4.isDeviceIncomplete()) Auto4.pauseShooting()
+                            Thread.sleep(100)
                             sendCommand("equipment")
                             calledFromAS = true
                         } catch (_: InterruptedException) {
@@ -49,12 +51,16 @@ object AutoSwap : Module(
                     if (!isNormalRod(rodSlot - 1)) return@on
                     actionExecutor.submit {
                         try {
-                            Thread.sleep(2000 + (0L..199L).random())
+                            Thread.sleep(100 + (0L..99L).random())
+                            if (Auto4.isDeviceIncomplete()) Auto4.pauseShooting()
+                            Thread.sleep(100)
                             mc.player?.inventory?.selectedSlot = rodSlot - 1
                             Thread.sleep(160 + (0L..40L).random())
                             rightClick()
                             Thread.sleep(160 + (0L..40L).random())
                             mc.player?.inventory?.selectedSlot = lastSlot
+                            Thread.sleep(50)
+                            if (Auto4.isDeviceIncomplete()) Auto4.resumeShooting()
                         } catch (_: InterruptedException) {
                             Thread.currentThread().interrupt()
                         }
@@ -74,7 +80,11 @@ object AutoSwap : Module(
                 schedule(6) {
                     id?.let { clickPlayerInventorySlot(spiritSlot, it) }
                     calledFromAS = false
-                    schedule(5) { mc.player?.closeContainer() }
+                    schedule(5) {
+                        mc.player?.closeContainer()
+                        Thread.sleep(50)
+                        if (Auto4.isDeviceIncomplete()) Auto4.resumeShooting()
+                    }
                 }
             }
         }
