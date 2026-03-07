@@ -1,6 +1,8 @@
 package cn.boop.necron.commands
 
+import cn.boop.necron.features.impl.necron.B64Chat
 import cn.boop.necron.utils.B64Utils
+import cn.boop.necron.utils.netowrk.WSClient
 import com.github.stivais.commodore.Commodore
 import com.github.stivais.commodore.utils.GreedyString
 import com.odtheking.odin.OdinMod
@@ -10,7 +12,14 @@ import net.minecraft.network.chat.Component
 val necronChatCommand = Commodore("ncc", "nchat") {
 
     runs { greedy: GreedyString ->
-        sendChatMessage(B64Utils.encodeWithOffset(greedy.string.replace("\\&", "§")))
+        val rawMessage = greedy.string.replace("\\&", "§")
+        val encoded = B64Utils.encodeWithOffset(rawMessage)
+
+        if (B64Chat.isWSEnabled() && WSClient.isConnected) {
+            WSClient.sendChat(encoded)
+        } else {
+            sendChatMessage(encoded)
+        }
     }
 
     literal("help").runs {
@@ -27,6 +36,23 @@ val necronChatCommand = Commodore("ncc", "nchat") {
             "§r§8§m-------------------------------------"
 
         val text = Component.literal(helpMsg)
+        OdinMod.mc.execute { OdinMod.mc.gui?.chat?.addMessage(text) }
+    }
+
+    literal("status").runs {
+        val wsStatus = if (WSClient.isConnected) "§aConnected" else "§4Disconnected"
+        val wsMode = if (B64Chat.isWSEnabled()) "§aEnabled" else "§cDisabled"
+
+        val statusMsg =
+            "§8§m-------------------------------------\n" +
+                    "§b              NecronClient Status\n" +
+                    "§r \n" +
+                    "§bWebSocket: $wsStatus\n" +
+                    "§bWS Mode:   $wsMode\n" +
+                    "§bPlayer:    ${WSClient.playerIGN}\n" +
+                    "§r§8§m-------------------------------------"
+
+        val text = Component.literal(statusMsg)
         OdinMod.mc.execute { OdinMod.mc.gui?.chat?.addMessage(text) }
     }
 }
