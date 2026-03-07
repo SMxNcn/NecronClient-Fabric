@@ -1,7 +1,7 @@
 package cn.boop.necron.features.impl.necron
 
 import cn.boop.necron.utils.NCategory
-import cn.boop.necron.utils.removeFormatting
+import cn.boop.necron.utils.clean
 import com.odtheking.odin.clickgui.settings.impl.BooleanSetting
 import com.odtheking.odin.clickgui.settings.impl.NumberSetting
 import com.odtheking.odin.events.GuiEvent
@@ -133,7 +133,7 @@ object AutoExperiments: Module (
             order.clear()
 
             for (slot in slots) {
-                if (slot.index in 9..44 && slot.item.hoverName.string.removeFormatting().matches(Regex("\\d+"))) order[slot.item.count - 1] = slot.index
+                if (slot.index in 9..44 && slot.item.hoverName.string.clean.matches(Regex("\\d+"))) order[slot.item.count - 1] = slot.index
             }
 
             hasData = true

@@ -2,7 +2,7 @@ package cn.boop.necron.features.impl.necron
 
 import cn.boop.necron.Necron
 import cn.boop.necron.utils.NCategory
-import cn.boop.necron.utils.removeFormatting
+import cn.boop.necron.utils.clean
 import com.odtheking.odin.clickgui.settings.impl.ActionSetting
 import com.odtheking.odin.clickgui.settings.impl.ListSetting
 import com.odtheking.odin.clickgui.settings.impl.NumberSetting
@@ -44,7 +44,7 @@ object AutoSell : Module(
                 val player = mc.player ?: return@schedule
                 val title = container.title?.string ?: return@schedule
 
-                if (!title.removeFormatting().equalsOneOf("Trades", "Booster Cookie", "Farm Merchant", "Ophelia")) return@schedule
+                if (!title.clean.equalsOneOf("Trades", "Booster Cookie", "Farm Merchant", "Ophelia")) return@schedule
 
                 val index = container.menu.slots.filter { it.container is Inventory }.firstOrNull {
                     val stack = it.item ?: return@firstOrNull false
