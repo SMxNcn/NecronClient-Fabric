@@ -4,13 +4,13 @@ import cn.boop.necron.utils.NCategory
 import cn.boop.necron.utils.RotationUtils
 import cn.boop.necron.utils.RotationUtils.exponentialSmooth
 import cn.boop.necron.utils.RotationUtils.vec3ToRotation
+import cn.boop.necron.utils.clean
 import cn.boop.necron.utils.dungeon.P3Stages
 import cn.boop.necron.utils.dungeon.getP3Stage
 import cn.boop.necron.utils.dungeon.leapTo
 import cn.boop.necron.utils.leftClick
-import cn.boop.necron.utils.removeFormatting
+import cn.boop.necron.utils.legacy
 import cn.boop.necron.utils.rightClick
-import cn.boop.necron.utils.toLegacyString
 import com.odtheking.odin.clickgui.settings.impl.NumberSetting
 import com.odtheking.odin.clickgui.settings.impl.SelectorSetting
 import com.odtheking.odin.events.BlockUpdateEvent
@@ -162,12 +162,12 @@ object Auto4 : Module (
 
         on<ChatPacketEvent> {
             if (getP3Stage() != P3Stages.S4 || isDeviceComplete) return@on
-            val message = value.removeFormatting()
+            val message = value.clean
             println(message)
             val matcher = deviceCompleteRegex.find(message)
             if (matcher != null) {
                 val player = matcher.groupValues[1]
-                if (player == mc.player?.name?.toLegacyString()) {
+                if (player == mc.player?.name?.legacy) {
                     schedule(4) { onComplete() }
                 }
             }

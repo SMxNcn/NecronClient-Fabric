@@ -1,9 +1,9 @@
 package cn.boop.necron.features.impl.necron
 
 import cn.boop.necron.utils.NCategory
+import cn.boop.necron.utils.clean
+import cn.boop.necron.utils.legacy
 import cn.boop.necron.utils.modMessage
-import cn.boop.necron.utils.removeFormatting
-import cn.boop.necron.utils.toLegacyString
 import com.odtheking.odin.clickgui.settings.impl.BooleanSetting
 import com.odtheking.odin.clickgui.settings.impl.StringSetting
 import com.odtheking.odin.events.GuiEvent
@@ -111,13 +111,13 @@ object RerollProtector : Module(
 
             if (!stack.isEmpty) {
                 val rawDisplayName = stack.displayName?.string ?: continue
-                var cleanName = rawDisplayName.removeFormatting()
+                var cleanName = rawDisplayName.clean
                 cleanName = cleanName.replace("[", "").replace("]", "").trim()
 
                 if (isRareItem(cleanName)) {
                     rareItemSlot = i
                     lastRareItemName = cleanName
-                    lastRawItemName = stack.displayName.toLegacyString().replace("[", "").replace("]", "")
+                    lastRawItemName = stack.displayName.legacy.replace("[", "").replace("]", "")
                     return true
                 }
             }
@@ -132,7 +132,7 @@ object RerollProtector : Module(
 
         val formattedChestName = getChestColor(chestName)
 
-        if (sendRngMessage) sendCommand("pc NC » ${chatMessage.removeFormatting()}")
+        if (sendRngMessage) sendCommand("pc NC » ${chatMessage.clean}")
         modMessage("§dRng Item §7in $formattedChestName§7! ($rawItemName§7)")
     }
 
@@ -148,7 +148,7 @@ object RerollProtector : Module(
     }
 
     private fun getChestColor(chestName: String): String {
-        return when (chestName.removeFormatting()) {
+        return when (chestName.clean) {
             "Bedrock Chest" -> "§8$chestName"
             "Obsidian Chest" -> "§5$chestName"
             "Emerald Chest" -> "§2$chestName"

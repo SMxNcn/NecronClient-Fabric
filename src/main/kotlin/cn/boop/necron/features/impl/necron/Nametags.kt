@@ -1,8 +1,8 @@
 package cn.boop.necron.features.impl.necron
 
 import cn.boop.necron.utils.NCategory
-import cn.boop.necron.utils.removeFormatting
-import cn.boop.necron.utils.toLegacyString
+import cn.boop.necron.utils.clean
+import cn.boop.necron.utils.legacy
 import com.odtheking.odin.clickgui.settings.Setting.Companion.withDependency
 import com.odtheking.odin.clickgui.settings.impl.BooleanSetting
 import com.odtheking.odin.clickgui.settings.impl.DropdownSetting
@@ -89,15 +89,15 @@ object Nametags : Module(
                 "§7[?] $playerName"
             }
         } else {
-            val displayName = entity.displayName?.toLegacyString()
+            val displayName = entity.displayName?.legacy
             val strippedName = displayName!!
 
-            return if (renderDistance) "$strippedName §7${distance}m" else strippedName
+            if (renderDistance) "$strippedName §7${distance}m" else strippedName
         }
     }
 
     fun isValidSkyBlockPlayer(entity: Player): Boolean {
-        val name = entity.displayName?.string?.removeFormatting()
+        val name = entity.displayName?.string?.clean
         if (name != null) {
             return if (forceSkyBlock) !name.contains("[NPC]") && !name.contains("CIT-")
             else name.matches(Regex("^\\[\\d{1,3}]\\s[a-zA-Z0-9_]{1,16}.*"))

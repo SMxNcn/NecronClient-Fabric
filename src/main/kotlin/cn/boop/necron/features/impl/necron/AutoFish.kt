@@ -1,7 +1,7 @@
 package cn.boop.necron.features.impl.necron
 
 import cn.boop.necron.utils.NCategory
-import cn.boop.necron.utils.removeFormatting
+import cn.boop.necron.utils.clean
 import cn.boop.necron.utils.rightClick
 import com.odtheking.odin.clickgui.settings.impl.BooleanSetting
 import com.odtheking.odin.clickgui.settings.impl.NumberSetting
@@ -134,7 +134,7 @@ object AutoFish : Module(
         val hook = mc.player?.fishing ?: return
         val armorStand = mc.level?.getEntitiesOfClass(
             ArmorStand::class.java, hook.boundingBox.inflate(1.0), { entity: ArmorStand ->
-                entity.isInvisible && entity.hasCustomName() && entity.customName?.string?.removeFormatting()?.contains("!!!") == true
+                entity.isInvisible && entity.hasCustomName() && entity.customName?.string?.clean?.contains("!!!") == true
             }
         )?.firstOrNull()
 

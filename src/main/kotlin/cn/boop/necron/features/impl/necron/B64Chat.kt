@@ -2,8 +2,8 @@ package cn.boop.necron.features.impl.necron
 
 import cn.boop.necron.utils.B64Utils
 import cn.boop.necron.utils.NCategory
-import cn.boop.necron.utils.removeFormattingToString
-import cn.boop.necron.utils.toLegacyString
+import cn.boop.necron.utils.cleanString
+import cn.boop.necron.utils.legacy
 import com.odtheking.odin.OdinMod
 import com.odtheking.odin.clickgui.settings.impl.BooleanSetting
 import com.odtheking.odin.events.ChatPacketEvent
@@ -20,9 +20,9 @@ object B64Chat : Module(
 
     init {
         on<ChatPacketEvent> {
-            var clean = component.removeFormattingToString()
-            var message = component.toLegacyString()
             if (clean.startsWith("Odin »") || clean.startsWith("N »")) return@on
+            var clean = component.cleanString
+            var message = component.legacy
             var startIndex = value.indexOf("::")
             if (startIndex != -1) {
                 var endIndex = value.indexOf("%]")

@@ -4,31 +4,32 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
 import java.util.Optional
 
-fun Component.toLegacyString(): String {
-    val builder = StringBuilder()
+val Component.legacy: String
+    get() {
+        val builder = StringBuilder()
 
-    this.visit({ style: Style, text: String ->
-        if (!style.isEmpty) {
-            style.color?.let { color ->
-                val colorCode = getLegacyColorCode(color.value)
-                if (colorCode != null) {
-                    builder.append(colorCode)
+        this.visit({ style: Style, text: String ->
+            if (!style.isEmpty) {
+                style.color?.let { color ->
+                    val colorCode = getLegacyColorCode(color.value)
+                    if (colorCode != null) {
+                        builder.append(colorCode)
+                    }
                 }
+
+                if (style.isBold) builder.append("§l")
+                if (style.isItalic) builder.append("§o")
+                if (style.isUnderlined) builder.append("§n")
+                if (style.isStrikethrough) builder.append("§m")
+                if (style.isObfuscated) builder.append("§k")
             }
 
-            if (style.isBold) builder.append("§l")
-            if (style.isItalic) builder.append("§o")
-            if (style.isUnderlined) builder.append("§n")
-            if (style.isStrikethrough) builder.append("§m")
-            if (style.isObfuscated) builder.append("§k")
-        }
+            builder.append(text)
+            Optional.empty<Unit>()
+        }, Style.EMPTY)
 
-        builder.append(text)
-        Optional.empty<Unit>()
-    }, Style.EMPTY)
-
-    return builder.toString()
-}
+        return builder.toString()
+    }
 
 private fun getLegacyColorCode(rgb: Int): String? = when (rgb) {
     0x000000 -> "§0"
