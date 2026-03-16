@@ -89,10 +89,7 @@ object Nametags : Module(
                 "§7[?] $playerName"
             }
         } else {
-            val displayName = entity.displayName?.legacy
-            val strippedName = displayName!!
-
-            if (renderDistance) "$strippedName §7${distance}m" else strippedName
+            if (renderDistance) "${entity.displayName?.legacy} §7${distance}m" else "${entity.displayName?.legacy}"
         }
     }
 
