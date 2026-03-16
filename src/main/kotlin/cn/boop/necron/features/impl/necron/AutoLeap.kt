@@ -31,6 +31,7 @@ object AutoLeap : Module(
 ) {
     private val leapAnnounce by BooleanSetting("Leap Announce", false, desc = "Announces when you leap to a player.")
     private val announceMessage by StringSetting("Announce Message", "Leaped to %p! (%c)", desc = "Message to announce in party after leaping. Use %p for player name, %c for class.").withDependency { leapAnnounce }
+    private val forceMageCore by BooleanSetting("Force MageCore", true, desc = "Always treat mage as core in P3 S3.")
 
     private var inLeapGui = false
     private var shouldAutoLeap = false
@@ -149,7 +150,12 @@ object AutoLeap : Module(
 
         if (phase == M7Phases.Unknown) return null
 
-        val isCore = p3Stage == P3Stages.S3 && MageCoreCheck.checkIfMageIsCore()
+        val isCoreNormal = p3Stage == P3Stages.S3 && MageCoreCheck.checkIfMageIsCore()
+        val isCore = if (forceMageCore && p3Stage == P3Stages.S3) {
+            true
+        } else {
+            isCoreNormal
+        }
 
         return queryRule(myClass, phase, p3Stage, isCore)
     }
