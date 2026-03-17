@@ -48,7 +48,6 @@ object RerollProtector : Module(
         "Necron Dye",
         "Livid Dye",
         "Master Skull - Tier 5",
-        "Spirit Mask",
         "Fifth Master Star",
         "Fourth Master Star",
         "Third Master Star",
