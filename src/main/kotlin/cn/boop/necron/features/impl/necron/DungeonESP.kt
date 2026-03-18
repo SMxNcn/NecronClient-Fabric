@@ -11,6 +11,7 @@ import com.odtheking.odin.utils.Colors
 import com.odtheking.odin.utils.render.drawStyledBox
 import com.odtheking.odin.utils.renderBoundingBox
 import com.odtheking.odin.utils.skyblock.dungeon.DungeonUtils
+import com.odtheking.odin.utils.skyblock.dungeon.M7Phases
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.boss.wither.WitherBoss
 
@@ -21,7 +22,6 @@ object DungeonESP : Module(
 ) {
     private val witherESP by BooleanSetting("Wither ESP", true, desc = "Highlight Wither entities")
     private val batESP by BooleanSetting("Bat ESP", true, desc = "Highlight Bat entities")
-    private val onlyInBoss by BooleanSetting("Only in Boss", false, desc = "Only show ESP in boss rooms")
     private val color by ColorSetting("Highlight color", Colors.MINECRAFT_GOLD, true, desc = "The color of the highlight.")
     private val renderStyle by SelectorSetting("Render Style", "Outline", listOf("Filled", "Outline", "Filled Outline"), desc = "Style of the box.")
 
@@ -33,8 +33,8 @@ object DungeonESP : Module(
             for (entity in level.entitiesForRendering()) {
                 when {
                     witherESP && entity is WitherBoss -> {
-                        if (entity.isInvisible || (entity.yRot in 0.0f..10f && entity.xRot == 0.0f)) continue
-                        if (onlyInBoss && !DungeonUtils.inBoss) continue
+                        if (!DungeonUtils.inBoss || DungeonUtils.floor?.floorNumber != 7 || DungeonUtils.getF7Phase() == M7Phases.P5) continue
+                        if (entity.isInvisible || entity.invulnerableTicks == 800) continue
 
                         val floor = DungeonUtils.floor
                         if (floor?.floorNumber != 7) continue
