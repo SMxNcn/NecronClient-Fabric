@@ -27,7 +27,7 @@
     "fabric-api": ">=${fabric_api_version}",
     "minecraft": "~${minecraft_version}",
     "fabric-language-kotlin": ">=${fabric_kotlin_version}",
-    "odin": ">=0.1.5"
+    "odin": ">=0.1.6"
   },
   "custom": { "firmament:hide_from_modlist": true }
 }
