@@ -19,6 +19,7 @@ import cn.boop.necron.features.impl.necron.ItemStarDisplay
 import cn.boop.necron.features.impl.necron.RerollProtector
 import cn.boop.necron.features.impl.necron.Nametags
 import cn.boop.necron.features.impl.necron.AutoTerms
+import cn.boop.necron.features.impl.necron.Script
 import cn.boop.necron.features.impl.necron.TitleManager
 import com.odtheking.odin.config.ModuleConfig
 import com.odtheking.odin.events.core.EventBus
@@ -26,12 +27,21 @@ import com.odtheking.odin.features.ModuleManager
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.fabricmc.loader.api.FabricLoader
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.io.File
 
 object Necron : ClientModInitializer {
     val logger: Logger = LogManager.getLogger(Necron.javaClass)
     val config = ModuleConfig("necron.json")
+    val scriptDir: File by lazy {
+        val dir = File(FabricLoader.getInstance().configDir.toFile(), "odin/addons/scripts")
+        if (!dir.exists()) {
+            dir.mkdirs()
+        }
+        dir
+    }
 
     override fun onInitializeClient() {
         ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->
@@ -42,7 +52,7 @@ object Necron : ClientModInitializer {
 
         ModuleManager.registerModules(config,
             Auto4, AutoClicker, AutoCloseChest, AutoExperiments, AutoFish, AutoGFS, AutoLeap, AutoSell, AutoTerms, AutoSwap, B64Chat, DungeonESP, Etherwarp, FuckDiorite,
-            ItemStarDisplay, Nametags, RerollProtector, TitleManager)
+            ItemStarDisplay, Nametags, RerollProtector, Script, TitleManager)
 
         ClientTickEvents.START_CLIENT_TICK.register { _ ->
             if (TitleManager.enabled) {

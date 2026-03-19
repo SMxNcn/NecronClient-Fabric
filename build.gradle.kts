@@ -26,6 +26,7 @@ dependencies {
     modImplementation("com.github.odtheking:odinfabric:${property("odin_version")}")
 
     modImplementation("com.github.stivais:Commodore:${property("commodore_version")}")
+    modImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 
     property("minecraft_lwjgl_version").let { lwjglVersion ->
         modImplementation("org.lwjgl:lwjgl-nanovg:$lwjglVersion")
