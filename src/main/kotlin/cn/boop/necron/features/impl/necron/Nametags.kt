@@ -131,11 +131,7 @@ object Nametags : Module(
         return DungeonUtils.dungeonTeammates.any { it.name == playerName }
     }
 
-    fun shouldRemoveGlowing(): Boolean {
-        return enabled && teammateESP && removeGlowing && DungeonUtils.inDungeons
-    }
+    fun shouldRemoveGlowing() = enabled && teammateESP && removeGlowing && DungeonUtils.inDungeons
 
-    fun canDisplayNametags(): Boolean {
-        return enabled && (forceSkyBlock || LocationUtils.isInSkyblock)
-    }
+    fun canDisplayNametags() = enabled && (forceSkyBlock || LocationUtils.isInSkyblock)
 }

@@ -35,9 +35,6 @@ object DungeonESP : Module(
                     witherESP && entity is WitherBoss -> {
                         if (!DungeonUtils.inBoss || DungeonUtils.floor?.floorNumber != 7 || DungeonUtils.getF7Phase() == M7Phases.P5) continue
                         if (entity.isInvisible || entity.invulnerableTicks == 800) continue
-
-                        val floor = DungeonUtils.floor
-                        if (floor?.floorNumber != 7) continue
                         drawStyledBox(entity.renderBoundingBox, color, renderStyle, false)
                     }
 

@@ -92,9 +92,7 @@ object Auto4 : Module (
         isPaused = false
     }
 
-    fun isDeviceIncomplete(): Boolean {
-        return enabled && isPlayerAtDevice() && !isDeviceComplete
-    }
+    fun isDeviceIncomplete() = enabled && isPlayerAtDevice() && !isDeviceComplete
 
     private fun resetState() {
         markedPositions.clear()

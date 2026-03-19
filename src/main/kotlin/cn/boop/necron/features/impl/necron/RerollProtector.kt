@@ -115,7 +115,7 @@ object RerollProtector : Module(
                 var cleanName = rawDisplayName.clean
                 cleanName = cleanName.replace("[", "").replace("]", "").trim()
 
-                if (isRareItem(cleanName)) {
+                if (RARE_ITEMS.contains(cleanName)) {
                     rareItemSlot = i
                     lastRareItemName = cleanName
                     lastRawItemName = stack.displayName.legacy.replace("[", "").replace("]", "")
@@ -135,10 +135,6 @@ object RerollProtector : Module(
 
         if (sendRngMessage) sendCommand("pc NC » ${chatMessage.clean}")
         modMessage("§dRng Item §7in $formattedChestName§7! ($rawItemName§7)")
-    }
-
-    private fun isRareItem(itemName: String): Boolean {
-        return RARE_ITEMS.contains(itemName)
     }
 
     private fun resetState() {

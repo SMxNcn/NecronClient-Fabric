@@ -132,11 +132,9 @@ object AutoFish : Module(
 
     private fun checkHookArmorStand() {
         val hook = mc.player?.fishing ?: return
-        val armorStand = mc.level?.getEntitiesOfClass(
-            ArmorStand::class.java, hook.boundingBox.inflate(1.0), { entity: ArmorStand ->
-                entity.isInvisible && entity.hasCustomName() && entity.customName?.string?.clean?.contains("!!!") == true
-            }
-        )?.firstOrNull()
+        val armorStand = mc.level?.getEntitiesOfClass(ArmorStand::class.java, hook.boundingBox.inflate(1.0)) { entity: ArmorStand ->
+            entity.isInvisible && entity.hasCustomName() && entity.customName?.string?.clean?.contains("!!!") == true
+        }?.firstOrNull()
 
         armorStand?.let { fishBitten = true }
     }
