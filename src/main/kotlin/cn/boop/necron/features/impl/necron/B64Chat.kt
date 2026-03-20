@@ -5,10 +5,10 @@ import cn.boop.necron.utils.NCategory
 import cn.boop.necron.utils.cleanString
 import cn.boop.necron.utils.legacy
 import cn.boop.necron.utils.modMessage
-import cn.boop.necron.utils.netowrk.WebSocketMessageHandler.handleRareDrop
-import cn.boop.necron.utils.netowrk.WSClient
-import cn.boop.necron.utils.netowrk.WebSocketManager
-import cn.boop.necron.utils.netowrk.WebSocketMessageHandler.handleWsJoin
+import cn.boop.necron.utils.network.WebSocketMessageHandler.handleRareDrop
+import cn.boop.necron.utils.network.WSClient
+import cn.boop.necron.utils.network.WebSocketManager
+import cn.boop.necron.utils.network.WebSocketMessageHandler.handleWsJoin
 import com.odtheking.odin.OdinMod
 import com.odtheking.odin.clickgui.settings.impl.BooleanSetting
 import com.odtheking.odin.events.ChatPacketEvent

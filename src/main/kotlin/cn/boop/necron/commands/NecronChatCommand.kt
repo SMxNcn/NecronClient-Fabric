@@ -2,7 +2,7 @@ package cn.boop.necron.commands
 
 import cn.boop.necron.features.impl.necron.B64Chat
 import cn.boop.necron.utils.B64Utils
-import cn.boop.necron.utils.netowrk.WSClient
+import cn.boop.necron.utils.network.WSClient
 import com.github.stivais.commodore.Commodore
 import com.github.stivais.commodore.utils.GreedyString
 import com.odtheking.odin.OdinMod

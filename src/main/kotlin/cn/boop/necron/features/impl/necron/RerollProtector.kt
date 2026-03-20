@@ -4,7 +4,7 @@ import cn.boop.necron.utils.NCategory
 import cn.boop.necron.utils.clean
 import cn.boop.necron.utils.legacy
 import cn.boop.necron.utils.modMessage
-import cn.boop.necron.utils.netowrk.WebSocketMessageHandler.handleChestReward
+import cn.boop.necron.utils.network.WebSocketMessageHandler.handleChestReward
 import com.odtheking.odin.clickgui.settings.impl.BooleanSetting
 import com.odtheking.odin.clickgui.settings.impl.StringSetting
 import com.odtheking.odin.events.GuiEvent
