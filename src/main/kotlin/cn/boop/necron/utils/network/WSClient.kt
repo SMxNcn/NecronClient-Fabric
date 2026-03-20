@@ -1,4 +1,4 @@
-package cn.boop.necron.utils.netowrk
+package cn.boop.necron.utils.network
 
 import cn.boop.necron.Necron
 import cn.boop.necron.utils.modMessage

@@ -1,4 +1,4 @@
-package cn.boop.necron.utils.netowrk
+package cn.boop.necron.utils.network
 
 class WebSocketManager {
     interface WSMessage {

@@ -1,4 +1,4 @@
-package cn.boop.necron.utils.netowrk
+package cn.boop.necron.utils.network
 
 object WSConfig {
     const val SERVER_URL = "ws://0.0.0.0:8080"

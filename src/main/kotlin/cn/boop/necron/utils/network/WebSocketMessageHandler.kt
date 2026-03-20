@@ -1,4 +1,4 @@
-package cn.boop.necron.utils.netowrk
+package cn.boop.necron.utils.network
 
 import cn.boop.necron.features.impl.necron.B64Chat.lastIsland
 import cn.boop.necron.features.impl.necron.B64Chat.lastLobbyId
