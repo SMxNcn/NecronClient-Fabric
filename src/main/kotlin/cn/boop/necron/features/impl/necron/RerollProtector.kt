@@ -14,7 +14,9 @@ import com.odtheking.odin.features.Module
 import com.odtheking.odin.utils.equalsOneOf
 import com.odtheking.odin.utils.handlers.schedule
 import com.odtheking.odin.utils.sendCommand
+import com.odtheking.odin.utils.skyblock.Island
 import com.odtheking.odin.utils.skyblock.KuudraUtils
+import com.odtheking.odin.utils.skyblock.LocationUtils
 import com.odtheking.odin.utils.skyblock.dungeon.DungeonUtils
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.world.Container
@@ -61,11 +63,11 @@ object RerollProtector : Module(
 
     init {
         on<GuiEvent.Open> {
-            if (!(DungeonUtils.inDungeons || KuudraUtils.inKuudra)) return@on
+            if (!(DungeonUtils.inDungeons || KuudraUtils.inKuudra) || LocationUtils.currentArea == Island.DungeonHub) return@on
             val chest = (screen as? AbstractContainerScreen<*>) ?: return@on
             if (lastCheckedChest != chest.title.string) {
                 hasShownMessage = false
-                lastCheckedChest = chest.title.string
+                lastCheckedChest = getChestColor(chest.title.string)
             }
 
             if (!isRewardChest(chest)) return@on
@@ -76,7 +78,7 @@ object RerollProtector : Module(
                 if (hasRareItems && !hasShownMessage && lastRareItemName != null) {
                     hasShownMessage = true
                     sendMessage(lastRawItemName!!, lastCheckedChest!!)
-                    handleChestReward(lastRareItemName!!, lastCheckedChest!!)
+                    handleChestReward(lastRawItemName!!, lastCheckedChest!!)
                 }
             }
         }
@@ -100,7 +102,7 @@ object RerollProtector : Module(
     }
 
     private fun isRewardChest(chest: AbstractContainerScreen<*>): Boolean {
-        return chest.title.string.equalsOneOf("Wood Chest", "Gold Chest", "Diamond Chest", "Emerald Chest", "Obsidian Chest", "Bedrock Chest", "Free Chest", "Paid Chest")
+        return chest.title.string.equalsOneOf("Wood", "Gold", "Diamond", "Emerald", "Obsidian", "Bedrock", "Free", "Paid")
     }
 
     private fun hasRareLoot(container: Container): Boolean {
@@ -128,13 +130,9 @@ object RerollProtector : Module(
     }
 
     private fun sendMessage(itemName: String, chestName: String) {
-        val rawItemName = itemName.replace("[", "").replace("]", "").trim()
-        val chatMessage = message.replace("%i", rawItemName).replace("%c", chestName)
-
-        val formattedChestName = getChestColor(chestName)
-
+        val chatMessage = message.replace("%i", itemName).replace("%c", chestName)
         if (sendRngMessage) sendCommand("pc NC » ${chatMessage.clean}")
-        modMessage("§dRng Item §7in $formattedChestName§7! ($rawItemName§7)")
+        modMessage("§dRng Item §7in $chestName§7! ($itemName§7)")
     }
 
     private fun resetState() {
@@ -146,13 +144,13 @@ object RerollProtector : Module(
 
     private fun getChestColor(chestName: String): String {
         return when (chestName.clean) {
-            "Bedrock Chest" -> "§8$chestName"
-            "Obsidian Chest" -> "§5$chestName"
-            "Emerald Chest" -> "§2$chestName"
-            "Diamond Chest" -> "§b$chestName"
-            "Gold Chest" -> "§6$chestName"
-            "Wood Chest" -> "§f$chestName"
-            else -> "§f$chestName"
+            "Bedrock" -> "§8$chestName Chest"
+            "Obsidian" -> "§5$chestName Chest"
+            "Emerald" -> "§2$chestName Chest"
+            "Diamond" -> "§b$chestName Chest"
+            "Gold" -> "§6$chestName Chest"
+            "Wood" -> "§f$chestName Chest"
+            else -> "§f$chestName Chest"
         }
     }
 }

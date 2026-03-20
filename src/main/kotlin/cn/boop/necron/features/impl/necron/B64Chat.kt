@@ -90,7 +90,7 @@ object B64Chat : Module(
                 "reward" -> {
                     val rewardName = eventData.details["rewardName"] ?: "Unknown Reward"
                     val chestName = eventData.details["chestName"] ?: "Unknown Chest"
-                    "§f$from§r §7unlocked a $chestName §a§lREWARD!§r ($rewardName§7)"
+                    "§f$from§r §7unlocked a $rewardName §7in $chestName§7!"
                 }
 
                 "server_change" -> {
