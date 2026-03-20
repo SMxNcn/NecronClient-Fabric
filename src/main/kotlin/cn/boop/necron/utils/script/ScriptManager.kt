@@ -34,7 +34,7 @@ object ScriptManager {
                         }
                     }
                 }
-            modMessage("Loaded §a${scripts.size} §7scripts.")
+            modMessage("§7Loaded ${scripts.size} script(s).")
         } catch (e: Exception) {
             modMessage("§cFailed to load scripts: ${e.message}")
             e.printStackTrace()

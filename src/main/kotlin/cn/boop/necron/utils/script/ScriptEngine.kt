@@ -17,7 +17,7 @@ object ScriptEngine {
 
         scope.launch {
             if (config.enabled && canTriggerMsg()) {
-                modMessage("§aScript '${config.name}' triggered!")
+                modMessage("§7Executing script §a[${config.name}] §7on §8[${config.triggerKeyStr}]")
             }
 
             if (config.initialDelay > 0) {
@@ -25,10 +25,7 @@ object ScriptEngine {
             }
 
             for (actionJson in config.actions) {
-                if (!config.enabled) {
-                    modMessage("§cScript '${config.name}' is currently disabled!.")
-                    break
-                }
+                if (!config.enabled) break
 
                 try {
                     val action = createActionInstance(actionJson)
