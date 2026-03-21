@@ -84,7 +84,7 @@ object RerollProtector : Module(
         }
 
         on<GuiEvent.SlotClick> {
-            if (!hasRareItems || slotId != REROLL_BUTTON_ID && !(DungeonUtils.inDungeons || KuudraUtils.inKuudra)) return@on
+            if (!hasRareItems || slotId != REROLL_BUTTON_ID || !(DungeonUtils.inDungeons || KuudraUtils.inKuudra)) return@on
             if (button == 0 || button == 1) {
                 cancel()
                 modMessage("§cReroll button has been §lDISABLED§r§c!")
@@ -101,9 +101,8 @@ object RerollProtector : Module(
         }
     }
 
-    private fun isRewardChest(chest: AbstractContainerScreen<*>): Boolean {
-        return chest.title.string.equalsOneOf("Wood", "Gold", "Diamond", "Emerald", "Obsidian", "Bedrock", "Free", "Paid")
-    }
+    private fun isRewardChest(chest: AbstractContainerScreen<*>) =
+        chest.title.string.equalsOneOf("Wood", "Gold", "Diamond", "Emerald", "Obsidian", "Bedrock", "Free", "Paid")
 
     private fun hasRareLoot(container: Container): Boolean {
         val containerSize = container.containerSize
