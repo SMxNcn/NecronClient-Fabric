@@ -7,7 +7,10 @@ import com.odtheking.odin.clickgui.settings.impl.BooleanSetting
 import com.odtheking.odin.clickgui.settings.impl.DropdownSetting
 import com.odtheking.odin.clickgui.settings.impl.StringSetting
 import com.odtheking.odin.features.Module
+import com.odtheking.odin.utils.skyblock.Island
 import com.odtheking.odin.utils.skyblock.LocationUtils
+import com.odtheking.odin.utils.skyblock.dungeon.DungeonUtils
+import com.odtheking.odin.utils.skyblock.dungeon.Floor
 import org.lwjgl.glfw.GLFW
 
 object TitleManager : Module (
@@ -33,8 +36,11 @@ object TitleManager : Module (
 
     fun buildTitle(): String {
         val sb = StringBuilder(titleText)
-        val locationText = LocationUtils.currentArea.displayName
+        var locationText = LocationUtils.currentArea.displayName
         val playerName = OdinMod.mc.player?.name?.string
+        if (LocationUtils.currentArea == Island.Dungeon) {
+            locationText += " ${DungeonUtils.floor?.name}"
+        }
         if (displayLocation && !locationText.contains("Unknown")) sb.append(" | ").append(locationText)
         if (displayPlayer && playerName != null) sb.append(" | ").append(playerName)
         return sb.toString()

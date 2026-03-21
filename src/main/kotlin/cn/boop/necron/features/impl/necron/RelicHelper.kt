@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
 
 object RelicHelper : Module(
-    name = "RelicHelper",
+    name = "Relic Helper",
     description = "Useful features for Wither King relics.",
     category = NCategory.NECRON
 ) {
