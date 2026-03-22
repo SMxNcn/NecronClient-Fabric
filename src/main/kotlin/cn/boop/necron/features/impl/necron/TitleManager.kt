@@ -10,7 +10,6 @@ import com.odtheking.odin.features.Module
 import com.odtheking.odin.utils.skyblock.Island
 import com.odtheking.odin.utils.skyblock.LocationUtils
 import com.odtheking.odin.utils.skyblock.dungeon.DungeonUtils
-import com.odtheking.odin.utils.skyblock.dungeon.Floor
 import org.lwjgl.glfw.GLFW
 
 object TitleManager : Module (
@@ -18,10 +17,11 @@ object TitleManager : Module (
     description = "Manage your window title.",
     category = NCategory.NECRON
 ) {
-    private var titleText by StringSetting("Title", "Minecraft 1.21.10", desc = "Title")
-    private var dropdown by DropdownSetting("Show Settings")
-    private var displayLocation by BooleanSetting("Location", false, desc = "Island name").withDependency { dropdown }
-    private var displayPlayer by BooleanSetting("Player Name", false, desc = "Player name").withDependency { dropdown }
+    private val titleText by StringSetting("Title", "Minecraft 1.21.10", desc = "Title")
+    private val dropdown by DropdownSetting("Show Settings")
+    private val displayLocation by BooleanSetting("Location", false, desc = "Island name").withDependency { dropdown }
+    private val displayPlayer by BooleanSetting("Player Name", false, desc = "Player name").withDependency { dropdown }
+    private val windowIcon by BooleanSetting("Window Icon", false, desc = "Restart the game to apply icon changes").withDependency { dropdown }
 
     fun updateTitle() {
         val window = OdinMod.mc.window ?: return
@@ -45,4 +45,6 @@ object TitleManager : Module (
         if (displayPlayer && playerName != null) sb.append(" | ").append(playerName)
         return sb.toString()
     }
+
+    fun isCustomIcon() = enabled && windowIcon
 }
