@@ -13,10 +13,22 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 
 val tickDelta = mc.deltaTracker.getGameTimeDeltaPartialTick(true)
+val ncPrefix: Component = coloredChar("N", 0x44aaf8)
+    .append(coloredChar("e", 0x47bbf9))
+    .append(coloredChar("c", 0x4bccfb))
+    .append(coloredChar("r", 0x4eddfc))
+    .append(coloredChar("o", 0x52eefe))
+    .append(coloredChar("n",0x55ffff))
 
 fun modMessage(message: Any?, prefix: String = "§bNecron §8»§r ", chatStyle: Style? = null) {
     val text = Component.literal("$prefix$message")
     chatStyle?.let { text.setStyle(chatStyle) }
+    if (mc.isSameThread) mc.gui?.chat?.addMessage(text)
+    else mc.execute { mc.gui?.chat?.addMessage(text) }
+}
+
+fun modMessage(message: Any?) {
+    val text = ncPrefix.copy().append(Component.literal(" §8»§r $message"))
     if (mc.isSameThread) mc.gui?.chat?.addMessage(text)
     else mc.execute { mc.gui?.chat?.addMessage(text) }
 }

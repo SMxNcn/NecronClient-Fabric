@@ -2,6 +2,7 @@ package cn.boop.necron.utils
 
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
+import java.awt.Color
 import java.util.Optional
 
 val Component.legacy: String
@@ -50,3 +51,6 @@ private fun getLegacyColorCode(rgb: Int): String? = when (rgb) {
     0xFFFFFF -> "§f"
     else -> null
 }
+
+fun coloredChar(char: String, color: Int) =
+    (Component.literal(char).withColor(Color(color).rgb)!!)
