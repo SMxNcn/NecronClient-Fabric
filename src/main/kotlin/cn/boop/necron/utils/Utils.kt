@@ -70,6 +70,7 @@ fun findItemByID(itemID: String?): Int {
 }
 
 fun clickInventorySlot(slot: Int, containerId: Int, rightClick: Boolean = false) {
+    if (mc.screen == null) return
     val player = mc.player ?: return
 
     mc.execute {
@@ -78,6 +79,7 @@ fun clickInventorySlot(slot: Int, containerId: Int, rightClick: Boolean = false)
 }
 
 fun clickPlayerInventorySlot(slot: Int, containerId: Int) {
+    if (mc.screen == null) return
     val player = mc.player ?: return
     val container = player.containerMenu
 
