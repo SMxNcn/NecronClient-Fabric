@@ -43,7 +43,7 @@ object ScriptManager {
 
     fun reloadScripts() {
         loadAllScripts()
-        modMessage("Scripts reloaded.")
+        modMessage("§7Scripts reloaded.")
     }
 
     fun triggerScripts(keyCode: Int) {
