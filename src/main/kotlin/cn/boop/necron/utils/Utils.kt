@@ -110,3 +110,5 @@ fun isNormalRod(slot: Int): Boolean =
         val stack = player.inventory.getItem(slot)
         !stack.isEmpty && stack.item == Items.FISHING_ROD && !stack.itemId.containsOneOf("SOUL_WHIP", "FLAMING_FLAY", ignoreCase = true)
     } ?: false
+
+fun findRodSlot(): Int = (0..8).firstOrNull { isNormalRod(it) } ?: -1

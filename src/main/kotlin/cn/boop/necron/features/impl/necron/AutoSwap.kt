@@ -3,8 +3,11 @@ package cn.boop.necron.features.impl.necron
 import cn.boop.necron.utils.NCategory
 import cn.boop.necron.utils.clickPlayerInventorySlot
 import cn.boop.necron.utils.findItemByID
-import cn.boop.necron.utils.isNormalRod
+import cn.boop.necron.utils.findRodSlot
 import cn.boop.necron.utils.rightClick
+import com.odtheking.odin.clickgui.settings.Setting.Companion.withDependency
+import com.odtheking.odin.clickgui.settings.impl.BooleanSetting
+import com.odtheking.odin.clickgui.settings.impl.DropdownSetting
 import com.odtheking.odin.clickgui.settings.impl.NumberSetting
 import com.odtheking.odin.events.ChatPacketEvent
 import com.odtheking.odin.events.GuiEvent
@@ -21,7 +24,10 @@ object AutoSwap : Module(
     description = "Auto swap spirit/bonzo",
     category = NCategory.NECRON
 ) {
-    private val rodSlot by NumberSetting("Rod Slot", 0, 1, 8, 1, desc = "Not include SkyBlock Menu slot")
+    private val useCustomDelay by BooleanSetting("Custom Swap Delay", false, desc = "Customize delay before swapping items.")
+    private val custom by DropdownSetting("Delay", false, desc = "Delay settings.").withDependency { useCustomDelay }
+    private val spiritDelay by NumberSetting("Spirit Swap Delay", 200f, 100f, 2000f, 50f, desc = "Delay before equipping Spirit Mask.").withDependency { custom }
+    private val phoenixDelay by NumberSetting("Phoenix Swap Delay", 200f, 100f, 2000f, 50f, desc = "Delay before switching to fishing rod.").withDependency { custom }
 
     private val bonzoRegex = Regex("^Your (?:. )?Bonzo's Mask saved your life!$")
     private val spiritRegex = Regex("^Second Wind Activated! Your Spirit Mask saved your life!$")
@@ -31,11 +37,12 @@ object AutoSwap : Module(
     init {
         on<ChatPacketEvent> {
             if (!DungeonUtils.inDungeons) return@on
+            val delayTime = if (useCustomDelay) spiritDelay.toInt() else 100
             when{
                 value.matches(bonzoRegex) -> {
                     actionExecutor.submit {
                         try {
-                            Thread.sleep(100 + (0L..99L).random())
+                            Thread.sleep(delayTime + (0L..99L).random())
                             if (Auto4.isDeviceIncomplete()) Auto4.pauseShooting()
                             Thread.sleep(100)
                             sendCommand("equipment")
@@ -48,13 +55,14 @@ object AutoSwap : Module(
 
                 value.matches(spiritRegex) -> {
                     val lastSlot = mc.player?.inventory?.selectedSlot ?: return@on
-                    if (!isNormalRod(rodSlot - 1)) return@on
+                    val delayTime = if (useCustomDelay) phoenixDelay.toInt() else 100
+                    if (findRodSlot() == -1) return@on
                     actionExecutor.submit {
                         try {
-                            Thread.sleep(100 + (0L..99L).random())
+                            Thread.sleep(delayTime + (0L..99L).random())
                             if (Auto4.isDeviceIncomplete()) Auto4.pauseShooting()
                             Thread.sleep(100)
-                            mc.player?.inventory?.selectedSlot = rodSlot - 1
+                            mc.player?.inventory?.selectedSlot = findRodSlot()
                             Thread.sleep(160 + (0L..40L).random())
                             rightClick()
                             Thread.sleep(160 + (0L..40L).random())
