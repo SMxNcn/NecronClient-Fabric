@@ -1,6 +1,6 @@
 package cn.boop.necron.features.impl.necron
 
-import cn.boop.necron.Necron.scriptDir
+import cn.boop.necron.Necron.logger
 import cn.boop.necron.utils.NCategory
 import cn.boop.necron.utils.script.ScriptManager
 import cn.boop.necron.utils.script.ScriptManager.lastFrameKeyStates
@@ -15,7 +15,9 @@ import com.odtheking.odin.clickgui.settings.impl.SelectorSetting
 import com.odtheking.odin.events.TickEvent
 import com.odtheking.odin.events.core.on
 import com.odtheking.odin.features.Module
+import net.fabricmc.loader.api.FabricLoader
 import java.awt.Desktop
+import java.io.File
 
 object Script : Module(
     name = "Script",
@@ -25,7 +27,13 @@ object Script : Module(
     private val keyTriggerType by SelectorSetting("Trigger Type", "Press", listOf("Release", "Press"), desc = "Key Trigger type")
     private val showTriggerMsg by BooleanSetting("Script Trigger Message", true, desc = "Show Trigger message")
     private val reloadSetting by ActionSetting("Reload Scripts", "Re-scan the scripts folder") { ScriptManager.reloadScripts() }
-    private val openScriptPath by ActionSetting("Open Script Path", "Open the script path") { Desktop.getDesktop().open(scriptDir) }
+    private val openScriptPath by ActionSetting("Open Script Path", "Open the script path") {
+        try {
+            Desktop.getDesktop().open(File(FabricLoader.getInstance().configDir.toFile(), "odin/addons/scripts"))
+        } catch (e: Exception) {
+            logger.error("Failed to open folder.", e)
+        }
+    }
 
     init {
         on<TickEvent.End> {
@@ -41,8 +49,8 @@ object Script : Module(
                 currentFrameStates[keyCode] = isPressed
                 val wasPressed = lastFrameKeyStates[keyCode] ?: false
                 val canTrigger = when (keyTriggerType) {
-                    0 -> !wasPressed && isPressed
-                    1 -> wasPressed && !isPressed
+                    0 -> wasPressed && !isPressed
+                    1 -> !wasPressed && isPressed
                     else -> false
                 }
 
