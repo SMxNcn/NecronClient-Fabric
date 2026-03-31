@@ -8,6 +8,7 @@ import cn.boop.necron.utils.clean
 import cn.boop.necron.utils.dungeon.P3Stages
 import cn.boop.necron.utils.dungeon.getP3Stage
 import cn.boop.necron.utils.dungeon.leapTo
+import cn.boop.necron.utils.findLeapSlot
 import cn.boop.necron.utils.leftClick
 import cn.boop.necron.utils.legacy
 import cn.boop.necron.utils.rightClick
@@ -21,7 +22,6 @@ import com.odtheking.odin.events.WorldEvent
 import com.odtheking.odin.events.core.on
 import com.odtheking.odin.features.Module
 import com.odtheking.odin.utils.handlers.schedule
-import com.odtheking.odin.utils.itemId
 import com.odtheking.odin.utils.skyblock.dungeon.DungeonClass
 import com.odtheking.odin.utils.skyblock.dungeon.DungeonUtils.dungeonTeammates
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
@@ -36,7 +36,7 @@ object Auto4 : Module (
     description = "Auto complete Arrow Sharp device on F7/M7.",
     category = NCategory.NECRON
 ) {
-    private val leapItem by SelectorSetting("Leap Type", "Infinite", listOf("Infinite Leap", "Spirit Leap"), desc = "Which leap item used for auto leap.")
+    private val leapTarget by SelectorSetting("Leap Target", "Tank", listOf("Archer", "Berserk", "Healer", "Mage", "Tank"), desc = "Class to leap to after completing device.")
     private val aimSpeed by NumberSetting("Aim Speed", 0.25f, 0.05f, 1.0f, 0.05f, desc = "Smooth aiming transition speed.")
 
     private data class AimPoint(
@@ -242,29 +242,22 @@ object Auto4 : Module (
         isShooting = false
         resetState()
 
-        val tank = dungeonTeammates.find { it.clazz == DungeonClass.Tank && !it.isDead }
-        var leapSlot = -1
-        val id = when (leapItem) {
-            0 -> "INFINITE_SPIRIT_LEAP"
-            else -> "SPIRIT_LEAP"
-        }
+        val targetClass = dungeonTeammates.find { !it.isDead && it.clazz == when(leapTarget) {
+            0 -> DungeonClass.Archer
+            1 -> DungeonClass.Berserk
+            2 -> DungeonClass.Healer
+            3 -> DungeonClass.Mage
+            else -> DungeonClass.Tank
+        } }
 
-        for (slot in 0..8) {
-            val item = mc.player?.inventory?.getItem(slot) ?: return
-
-            if (item.itemId.contains(id)) {
-                leapSlot = slot
-                break
-            }
-        }
-
-        mc.player?.inventory?.selectedSlot = leapSlot
+        if (findLeapSlot() == -1) return
+        mc.player?.inventory?.selectedSlot = findLeapSlot()
         schedule(4) {
             rightClick()
-            schedule(4) {
+            schedule(2) {
                 val screen = mc.screen as? AbstractContainerScreen<*> ?: return@schedule
                 schedule(4) {
-                    tank?.name?.let { leapTo(it, screen) }
+                    targetClass?.name?.let { leapTo(it, screen) }
                 }
             }
         }

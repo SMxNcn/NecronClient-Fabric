@@ -53,19 +53,7 @@ object AutoLeap : Module(
             val chest = (screen as? AbstractContainerScreen<*>) ?: return@on
             inLeapGui = chest.title.string.equalsOneOf("Spirit Leap", "Teleport to Player")
             if (!DungeonUtils.inDungeons || !inLeapGui || !shouldAutoLeap) return@on
-            if (enabled) {
-                schedule(5) {
-                    performAutoLeap(chest)
-                }
-            } else {
-                inLeapGui = false
-            }
-        }
-
-        on<GuiEvent.Close> {
-            if (!DungeonUtils.inDungeons) return@on
-            shouldAutoLeap = false
-            inLeapGui = false
+            schedule(4) { performAutoLeap(chest) }
         }
 
         on<ChatPacketEvent> {
@@ -103,6 +91,7 @@ object AutoLeap : Module(
             leapTo(targetPlayer.name, screen)
             modMessage("Teleporting to ${targetPlayer.name} (${targetClass})")
         } catch (_: Exception) {} finally {
+            inLeapGui = false
             shouldAutoLeap = false
         }
     }
@@ -134,7 +123,6 @@ object AutoLeap : Module(
         val teammateToLeap = when (myClass) {
             DungeonClass.Archer -> DungeonUtils.dungeonTeammates.find { it.clazz == DungeonClass.Mage }
             DungeonClass.Mage -> DungeonUtils.dungeonTeammates.find { it.clazz == DungeonClass.Archer }
-            else -> null
         }
 
         return teammateToLeap?.clazz
@@ -151,18 +139,13 @@ object AutoLeap : Module(
         if (phase == M7Phases.Unknown) return null
 
         val isCoreNormal = p3Stage == P3Stages.S3 && MageCoreCheck.checkIfMageIsCore()
-        val isCore = if (forceMageCore && p3Stage == P3Stages.S3) {
-            true
-        } else {
-            isCoreNormal
-        }
+        val isCore = if (forceMageCore && p3Stage == P3Stages.S3) true else isCoreNormal
 
         return queryRule(myClass, phase, p3Stage, isCore)
     }
 
     private fun queryRule(sourceClass: DungeonClass, phase: M7Phases, p3Stage: P3Stages, isCore: Boolean = false): DungeonClass? {
         return when (sourceClass) {
-            // Archer
             DungeonClass.Archer -> when (phase) {
                 M7Phases.P1 -> DungeonClass.Berserk
                 M7Phases.P2 -> DungeonClass.Healer
@@ -182,7 +165,6 @@ object AutoLeap : Module(
                 else -> null
             }
 
-            // Berserk
             DungeonClass.Berserk -> when (phase) {
                 M7Phases.P1 -> null
                 M7Phases.P2 -> DungeonClass.Healer
@@ -202,7 +184,6 @@ object AutoLeap : Module(
                 else -> null
             }
 
-            // Healer
             DungeonClass.Healer -> when (phase) {
                 M7Phases.P1 -> null
                 M7Phases.P2 -> DungeonClass.Archer
@@ -222,7 +203,6 @@ object AutoLeap : Module(
                 else -> null
             }
 
-            // Mage
             DungeonClass.Mage -> when (phase) {
                 M7Phases.P1 -> DungeonClass.Berserk
                 M7Phases.P2 -> DungeonClass.Healer
@@ -239,7 +219,6 @@ object AutoLeap : Module(
                 else -> null
             }
 
-            // Tank
             DungeonClass.Tank -> when (phase) {
                 M7Phases.P1 -> DungeonClass.Berserk
                 M7Phases.P2 -> DungeonClass.Healer

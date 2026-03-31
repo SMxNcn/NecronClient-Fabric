@@ -12,7 +12,6 @@ import net.minecraft.world.inventory.ClickType
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 
-val tickDelta = mc.deltaTracker.getGameTimeDeltaPartialTick(true)
 val ncPrefix: Component = coloredChar("N", 0x44aaf8)
     .append(coloredChar("e", 0x47bbf9))
     .append(coloredChar("c", 0x4bccfb))
@@ -111,4 +110,12 @@ fun isNormalRod(slot: Int): Boolean =
         !stack.isEmpty && stack.item == Items.FISHING_ROD && !stack.itemId.containsOneOf("SOUL_WHIP", "FLAMING_FLAY", ignoreCase = true)
     } ?: false
 
+fun isLeapItem(slot: Int): Boolean =
+    mc.player?.let { player ->
+        val stack = player.inventory.getItem(slot)
+        !stack.isEmpty && stack.item == Items.PLAYER_HEAD && stack.itemId.containsOneOf("INFINITE_SPIRIT_LEAP", "SPIRIT_LEAP", ignoreCase = true)
+    } ?: false
+
 fun findRodSlot(): Int = (0..8).firstOrNull { isNormalRod(it) } ?: -1
+
+fun findLeapSlot(): Int = (0..8).firstOrNull { isLeapItem(it) } ?: -1
