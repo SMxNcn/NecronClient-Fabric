@@ -2,6 +2,7 @@ package cn.boop.necron
 
 import cn.boop.necron.commands.autoSellCommand
 import cn.boop.necron.commands.necronChatCommand
+import cn.boop.necron.commands.necronCommand
 import cn.boop.necron.features.impl.necron.Auto4
 import cn.boop.necron.features.impl.necron.AutoClicker
 import cn.boop.necron.features.impl.necron.AutoCloseChest
@@ -22,6 +23,8 @@ import cn.boop.necron.features.impl.necron.AutoTerms
 import cn.boop.necron.features.impl.necron.RelicHelper
 import cn.boop.necron.features.impl.necron.Script
 import cn.boop.necron.features.impl.necron.TitleManager
+import cn.boop.necron.utils.EquipmentUtils
+import cn.boop.necron.utils.WardrobeUtils
 import com.odtheking.odin.config.ModuleConfig
 import com.odtheking.odin.events.core.EventBus
 import com.odtheking.odin.features.ModuleManager
@@ -46,10 +49,10 @@ object Necron : ClientModInitializer {
 
     override fun onInitializeClient() {
         ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->
-            arrayOf(autoSellCommand, necronChatCommand/*, necronCommand*/).forEach { commodore -> commodore.register(dispatcher) }
+            arrayOf(autoSellCommand, necronChatCommand, necronCommand).forEach { commodore -> commodore.register(dispatcher) }
         }
 
-        listOf(this).forEach { EventBus.subscribe(it) }
+        listOf(this, EquipmentUtils, WardrobeUtils).forEach { EventBus.subscribe(it) }
 
         ModuleManager.registerModules(config,
             Auto4, AutoClicker, AutoCloseChest, AutoExperiments, AutoFish, AutoGFS, AutoLeap, AutoSell, AutoTerms, AutoSwap, B64Chat, DungeonESP, Etherwarp, FuckDiorite,

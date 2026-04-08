@@ -29,7 +29,7 @@ val Component.legacy: String
             Optional.empty<Unit>()
         }, Style.EMPTY)
 
-        return builder.toString()
+        return builder.toString().replace(Regex("§[^0-9a-fk-or]"), "").replace(Regex("(§[0-9a-f])(\\1)+"), "$1")
     }
 
 private fun getLegacyColorCode(rgb: Int): String? = when (rgb) {
