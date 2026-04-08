@@ -20,6 +20,7 @@ import cn.boop.necron.features.impl.necron.ItemStarDisplay
 import cn.boop.necron.features.impl.necron.RerollProtector
 import cn.boop.necron.features.impl.necron.Nametags
 import cn.boop.necron.features.impl.necron.AutoTerms
+import cn.boop.necron.features.impl.necron.HurtCamera
 import cn.boop.necron.features.impl.necron.RelicHelper
 import cn.boop.necron.features.impl.necron.Script
 import cn.boop.necron.features.impl.necron.TitleManager
@@ -55,8 +56,12 @@ object Necron : ClientModInitializer {
         listOf(this, EquipmentUtils, WardrobeUtils).forEach { EventBus.subscribe(it) }
 
         ModuleManager.registerModules(config,
-            Auto4, AutoClicker, AutoCloseChest, AutoExperiments, AutoFish, AutoGFS, AutoLeap, AutoSell, AutoTerms, AutoSwap, B64Chat, DungeonESP, Etherwarp, FuckDiorite,
-            ItemStarDisplay, Nametags, RelicHelper, RerollProtector, Script, TitleManager)
+            Auto4, AutoClicker, AutoCloseChest, AutoExperiments,
+            AutoFish, AutoGFS, AutoLeap, AutoSell, AutoTerms, AutoSwap,
+            B64Chat, DungeonESP, Etherwarp, FuckDiorite, HurtCamera,
+            ItemStarDisplay, Nametags, RelicHelper, RerollProtector,
+            Script, TitleManager
+        )
 
         ClientTickEvents.START_CLIENT_TICK.register { _ ->
             if (TitleManager.enabled) {
