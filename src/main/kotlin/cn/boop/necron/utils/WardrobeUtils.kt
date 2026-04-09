@@ -27,10 +27,6 @@ object WardrobeUtils {
             if (!calledFromThis || isProcessing) return@on
             handleGuiOpen(screen)
         }
-
-        on<GuiEvent.Close> {
-            println("Close")
-        }
     }
 
     /**

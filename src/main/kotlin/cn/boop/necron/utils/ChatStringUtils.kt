@@ -53,4 +53,4 @@ private fun getLegacyColorCode(rgb: Int): String? = when (rgb) {
 }
 
 fun coloredChar(char: String, color: Int) =
-    (Component.literal(char).withColor(Color(color).rgb)!!)
+    Component.literal(char).withColor(Color(color).rgb)!!

@@ -55,6 +55,7 @@ object RerollProtector : Module(
         "Third Master Star",
         "Second Master Star",
         "First Master Star",
+        "Spirit Mask",
         "Tentacle Dye",
         "Hellstorm Wand",
         "Tormentor"/*,

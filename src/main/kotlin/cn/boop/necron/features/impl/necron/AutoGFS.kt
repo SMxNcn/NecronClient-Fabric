@@ -9,7 +9,9 @@ import com.odtheking.odin.features.Module
 import com.odtheking.odin.utils.fillItemFromSack
 import com.odtheking.odin.utils.handlers.schedule
 import com.odtheking.odin.utils.itemId
+import com.odtheking.odin.utils.skyblock.Island
 import com.odtheking.odin.utils.skyblock.KuudraUtils
+import com.odtheking.odin.utils.skyblock.LocationUtils
 import com.odtheking.odin.utils.skyblock.dungeon.DungeonUtils
 
 object AutoGFS : Module(
@@ -33,15 +35,13 @@ object AutoGFS : Module(
     init {
         scheduleRefill()
         on<ChatPacketEvent> {
-            when {
-                value.matches(startRegex) -> {
-                    if (refillOnDungeonStart) refill()
-                }
-            }
+            if (!refillOnDungeonStart || LocationUtils.currentArea != Island.Dungeon) return@on
+            when { value.matches(startRegex) -> refill() }
         }
     }
 
     private fun scheduleRefill() {
+        if (!((inKuudra && KuudraUtils.inKuudra) || (inDungeon && DungeonUtils.inDungeons))) return
         val delayTicks = timerIncrements * 20
         schedule(delayTicks) {
             if (enabled && refillOnTimer) refill()
@@ -50,7 +50,6 @@ object AutoGFS : Module(
     }
 
     private fun refill() {
-        if (!((inKuudra && KuudraUtils.inKuudra) || (inDungeon && DungeonUtils.inDungeons))) return
         val inventory = mc.player?.inventory ?: return
 
         inventory.find { it?.itemId == "ENDER_PEARL" }?.takeIf { refillPearl }?.also { refillQueue.add(RefillItem(16, "ENDER_PEARL", "ender_pearl", false)) }

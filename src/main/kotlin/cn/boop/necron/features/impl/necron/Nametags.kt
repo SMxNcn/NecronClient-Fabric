@@ -52,7 +52,7 @@ object Nametags : Module(
                 val yOffset = if (entity.isCrouching) 0.6 + scale / 5f else 0.8 + scale / 5f
                 val renderPos = Vec3(entity.renderX, entity.renderY + entity.eyeHeight + yOffset, entity.renderZ)
 
-                drawText(text = nametagText, pos = renderPos, scale = scale, depth = false)
+                drawText(nametagText, renderPos, scale, false)
 
                 if (teammateESP && DungeonUtils.inDungeons && entity != mc.player) {
                     val playerName = entity.name.string
@@ -60,7 +60,7 @@ object Nametags : Module(
 
                     dungeonPlayer?.let { dp ->
                         val color = getDungeonClassColor(dp.clazz)
-                        drawStyledBox(aabb = entity.renderBoundingBox, color = color, style = 1, depth = false)
+                        drawStyledBox(entity.renderBoundingBox, color, 1, false)
                     }
                 }
             }
