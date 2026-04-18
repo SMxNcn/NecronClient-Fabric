@@ -16,13 +16,16 @@ import com.odtheking.odin.clickgui.settings.impl.NumberSetting
 import com.odtheking.odin.clickgui.settings.impl.SelectorSetting
 import com.odtheking.odin.events.BlockUpdateEvent
 import com.odtheking.odin.events.ChatPacketEvent
+import com.odtheking.odin.events.GuiEvent
 import com.odtheking.odin.events.RenderEvent
 import com.odtheking.odin.events.TickEvent
 import com.odtheking.odin.events.WorldEvent
 import com.odtheking.odin.events.core.on
 import com.odtheking.odin.features.Module
+import com.odtheking.odin.utils.equalsOneOf
 import com.odtheking.odin.utils.handlers.schedule
 import com.odtheking.odin.utils.skyblock.dungeon.DungeonClass
+import com.odtheking.odin.utils.skyblock.dungeon.DungeonUtils
 import com.odtheking.odin.utils.skyblock.dungeon.DungeonUtils.dungeonTeammates
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.core.BlockPos
@@ -37,7 +40,7 @@ object Auto4 : Module (
     category = NCategory.NECRON
 ) {
     private val leapTarget by SelectorSetting("Leap Target", "Tank", listOf("Archer", "Berserk", "Healer", "Mage", "Tank"), desc = "Class to leap to after completing device.")
-    private val aimSpeed by NumberSetting("Aim Speed", 0.25f, 0.05f, 1.0f, 0.05f, desc = "Smooth aiming transition speed.")
+    private val aimSpeed by NumberSetting("Aim Speed", 0.25f, 0.05f, 0.5f, 0.05f, desc = "Smooth aiming transition speed.")
 
     private data class AimPoint(
         val index: Int,
@@ -56,6 +59,7 @@ object Auto4 : Module (
     private var lastClickTime = 0L
     private var lastRenderUpdate = 0L
     private var isDeviceComplete = false
+    private var isI4Leap = false
 
     private val TARGET_POSITIONS = listOf(
         BlockPos(68, 130, 50), BlockPos(66, 130, 50), BlockPos(64, 130, 50),
@@ -80,8 +84,7 @@ object Auto4 : Module (
         Pair(BlockPos(64, 126, 50), BlockPos(66, 126, 50)) to 5
     )
 
-    var isPaused = false
-        private set
+    private var isPaused = false
 
     fun pauseShooting() {
         isPaused = true
@@ -102,6 +105,7 @@ object Auto4 : Module (
         isDeviceComplete = false
         isShooting = false
         isPaused = false
+        isI4Leap = false
     }
 
     init {
@@ -171,6 +175,14 @@ object Auto4 : Module (
             }
         }
 
+        on<GuiEvent.Open> {
+            val chest = (screen as? AbstractContainerScreen<*>) ?: return@on
+            if (!isI4Leap) return@on
+            val inLeapGui = chest.title.string.equalsOneOf("Spirit Leap", "Teleport to Player")
+            if (!DungeonUtils.inDungeons || !inLeapGui) return@on
+            schedule(4) { leapBack(chest) }
+        }
+
         on<WorldEvent.Load> {
             resetState()
         }
@@ -237,11 +249,7 @@ object Auto4 : Module (
                 abs(Mth.wrapDegrees(currentPitch - target.pitch)) < 0.5f
     }
 
-    private fun onComplete() {
-        isDeviceComplete = true
-        isShooting = false
-        resetState()
-
+    private fun leapBack(screen: AbstractContainerScreen<*>) {
         val targetClass = dungeonTeammates.find { !it.isDead && it.clazz == when(leapTarget) {
             0 -> DungeonClass.Archer
             1 -> DungeonClass.Berserk
@@ -250,16 +258,19 @@ object Auto4 : Module (
             else -> DungeonClass.Tank
         } }
 
+        targetClass?.name?.let { leapTo(it, screen) }
+    }
+
+    private fun onComplete() {
+        isDeviceComplete = true
+        isShooting = false
+        resetState()
+
         if (findLeapSlot() == -1) return
         mc.player?.inventory?.selectedSlot = findLeapSlot()
         schedule(4) {
             rightClick()
-            schedule(2) {
-                val screen = mc.screen as? AbstractContainerScreen<*> ?: return@schedule
-                schedule(4) {
-                    targetClass?.name?.let { leapTo(it, screen) }
-                }
-            }
+            isI4Leap = true
         }
     }
 }
