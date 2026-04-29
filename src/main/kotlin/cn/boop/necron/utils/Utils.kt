@@ -77,9 +77,9 @@ fun clickInventorySlot(slot: Int, containerId: Int, rightClick: Boolean = false)
     }
 }
 
-fun clickPlayerInventorySlot(slot: Int, containerId: Int) {
-    if (mc.screen == null) return
-    val player = mc.player ?: return
+fun clickPlayerInventorySlot(slot: Int, containerId: Int): Boolean {
+    if (mc.screen == null) return false
+    val player = mc.player ?: return false
     val container = player.containerMenu
 
     val containerSlots = container.slots.size
@@ -91,17 +91,18 @@ fun clickPlayerInventorySlot(slot: Int, containerId: Int) {
         }
         in 9..35 -> {
             val containerBaseSlots = containerSlots - 36
-            if (containerBaseSlots < 0) return
+            if (containerBaseSlots < 0) return false
             actualSlot = containerBaseSlots + (slot - 9)
         }
-        else -> return
+        else -> return false
     }
 
-    if (actualSlot !in 0 until containerSlots) return
+    if (actualSlot !in 0 until containerSlots) return false
 
     mc.execute {
         mc.gameMode?.handleInventoryMouseClick(containerId, actualSlot, 0, ClickType.PICKUP, player)
     }
+    return true
 }
 
 fun isNormalRod(slot: Int): Boolean =

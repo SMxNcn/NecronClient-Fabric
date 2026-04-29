@@ -79,8 +79,9 @@ object EquipmentUtils {
 
         isProcessing = true
 
-        clickPlayerInventorySlot(pendingSlots[currentIndex], containerId)
-        currentIndex++
+        if (clickPlayerInventorySlot(pendingSlots[currentIndex], containerId)) {
+            currentIndex++
+        }
 
         schedule((6..8).random()) {
             processNextItem()
