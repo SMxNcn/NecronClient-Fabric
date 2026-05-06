@@ -24,13 +24,6 @@ object Necron : ClientModInitializer {
     val logger: Logger = LogManager.getLogger(Necron.javaClass)
     val config = ModuleConfig("necron.json")
     val configDir : File = FabricLoader.getInstance().configDir.toFile()
-    val scriptDir: File by lazy {
-        val dir = File(configDir, "necron/scripts")
-        if (!dir.exists()) {
-            dir.mkdirs()
-        }
-        dir
-    }
 
     override fun onInitializeClient() {
         ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->
@@ -45,7 +38,7 @@ object Necron : ClientModInitializer {
             AutoFish, AutoGFS, AutoLeap, AutoSell, AutoTerms, AutoSwap,
             B64Chat, DungeonESP, Etherwarp, FuckDiorite, FarmingHelper,
             HurtCamera, ItemStarDisplay, Nametags, RelicHelper, RerollProtector,
-            Script, TitleManager
+            TitleManager
         )
 
         ClientTickEvents.START_CLIENT_TICK.register { _ ->

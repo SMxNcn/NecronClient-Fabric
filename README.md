@@ -14,7 +14,7 @@ Leveraging a modified [OdinFabric](https://github.com/SMxNcn/OdinFabric), this p
 - **Odin**: 0.1.6+
 
 ## 📚 Documentation
-- **[Script Guide](SCRIPT.md)** - Learn how to create and configure automation scripts.
+- **[Farming Guide](FARMING.md)** - Set up waypoints, configure actions, and automate Garden farming.
 
 ## ⚖️ Disclaimer
 
