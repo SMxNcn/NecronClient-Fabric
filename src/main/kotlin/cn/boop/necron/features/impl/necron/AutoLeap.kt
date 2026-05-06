@@ -39,7 +39,7 @@ object AutoLeap : Module(
     private val leapedRegex = Regex("You have teleported to (\\w{1,16})!")
 
     init {
-        on<InputEvent>{
+        on<InputEvent> {
             if (!DungeonUtils.inDungeons || key.value != 0) return@on
             if (mc.player?.mainHandItem?.itemId.equalsOneOf("INFINITE_SPIRIT_LEAP", "SPIRIT_LEAP")) {
                 targetClass = selectLeapTarget()

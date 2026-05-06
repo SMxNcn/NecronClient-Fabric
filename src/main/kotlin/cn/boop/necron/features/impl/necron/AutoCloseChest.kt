@@ -32,7 +32,7 @@ object AutoCloseChest : Module(
             }
         }
 
-        on <GuiEvent.MouseClick> {
+        on<GuiEvent.MouseClick> {
             if (mode != 1 || !inDungeons) return@on
 
             var title = screen.title.string
@@ -41,7 +41,7 @@ object AutoCloseChest : Module(
             if (isSecretChest) mc.player?.closeContainer()
         }
 
-        on <GuiEvent.KeyPress> {
+        on<GuiEvent.KeyPress> {
             if (mode != 1 || !inDungeons) return@on
 
             var title = screen.title.string

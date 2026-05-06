@@ -28,7 +28,7 @@ object AutoFish : Module(
     private val rethrowDelay by NumberSetting("Rethrow Delay", 500, 100, 500, 10, desc = "Delay before rethrowing fishing hook.", unit = "ms")
     private val waitTime by NumberSetting("Max Wait Time", 20, 20, 60, desc = "Maximum time to wait for bite before rethrowing.", unit = "s")
 
-    enum class FishingState() {
+    enum class FishingState {
         IDLE, THROW, WAIT, CAST, KILL
     }
 

@@ -11,6 +11,8 @@ import net.minecraft.network.chat.Style
 import net.minecraft.world.inventory.ClickType
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
+import net.minecraft.world.scores.DisplaySlot
+import net.minecraft.world.scores.PlayerTeam
 
 val ncPrefix: Component = coloredChar("N", 0x44aaf8)
     .append(coloredChar("e", 0x47bbf9))
