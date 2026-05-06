@@ -3,29 +3,12 @@ package cn.boop.necron
 import cn.boop.necron.commands.autoSellCommand
 import cn.boop.necron.commands.necronChatCommand
 import cn.boop.necron.commands.necronCommand
-import cn.boop.necron.features.impl.necron.Auto4
-import cn.boop.necron.features.impl.necron.AutoClicker
-import cn.boop.necron.features.impl.necron.AutoCloseChest
-import cn.boop.necron.features.impl.necron.AutoExperiments
-import cn.boop.necron.features.impl.necron.AutoFish
-import cn.boop.necron.features.impl.necron.AutoGFS
-import cn.boop.necron.features.impl.necron.AutoLeap
-import cn.boop.necron.features.impl.necron.AutoSell
-import cn.boop.necron.features.impl.necron.AutoSwap
-import cn.boop.necron.features.impl.necron.B64Chat
-import cn.boop.necron.features.impl.necron.DungeonESP
-import cn.boop.necron.features.impl.necron.Etherwarp
-import cn.boop.necron.features.impl.necron.FuckDiorite
-import cn.boop.necron.features.impl.necron.ItemStarDisplay
-import cn.boop.necron.features.impl.necron.RerollProtector
-import cn.boop.necron.features.impl.necron.Nametags
-import cn.boop.necron.features.impl.necron.AutoTerms
-import cn.boop.necron.features.impl.necron.HurtCamera
-import cn.boop.necron.features.impl.necron.RelicHelper
-import cn.boop.necron.features.impl.necron.Script
-import cn.boop.necron.features.impl.necron.TitleManager
+import cn.boop.necron.commands.nwpCommand
+import cn.boop.necron.events.CustomEventDispatcher
+import cn.boop.necron.features.impl.necron.*
 import cn.boop.necron.utils.EquipmentUtils
 import cn.boop.necron.utils.WardrobeUtils
+import cn.boop.necron.utils.network.MayorData
 import com.odtheking.odin.config.ModuleConfig
 import com.odtheking.odin.events.core.EventBus
 import com.odtheking.odin.features.ModuleManager
@@ -40,8 +23,9 @@ import java.io.File
 object Necron : ClientModInitializer {
     val logger: Logger = LogManager.getLogger(Necron.javaClass)
     val config = ModuleConfig("necron.json")
+    val configDir : File = FabricLoader.getInstance().configDir.toFile()
     val scriptDir: File by lazy {
-        val dir = File(FabricLoader.getInstance().configDir.toFile(), "odin/addons/scripts")
+        val dir = File(configDir, "necron/scripts")
         if (!dir.exists()) {
             dir.mkdirs()
         }
@@ -50,16 +34,17 @@ object Necron : ClientModInitializer {
 
     override fun onInitializeClient() {
         ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->
-            arrayOf(autoSellCommand, necronChatCommand, necronCommand).forEach { commodore -> commodore.register(dispatcher) }
+            arrayOf(autoSellCommand, necronChatCommand, necronCommand, nwpCommand).forEach { commodore -> commodore.register(dispatcher) }
         }
 
-        listOf(this, EquipmentUtils, WardrobeUtils).forEach { EventBus.subscribe(it) }
+        listOf(this, CustomEventDispatcher, EquipmentUtils, WardrobeUtils).forEach { EventBus.subscribe(it) }
 
+        MayorData.fetchData()
         ModuleManager.registerModules(config,
             Auto4, AutoClicker, AutoCloseChest, AutoExperiments,
             AutoFish, AutoGFS, AutoLeap, AutoSell, AutoTerms, AutoSwap,
-            B64Chat, DungeonESP, Etherwarp, FuckDiorite, HurtCamera,
-            ItemStarDisplay, Nametags, RelicHelper, RerollProtector,
+            B64Chat, DungeonESP, Etherwarp, FuckDiorite, FarmingHelper,
+            HurtCamera, ItemStarDisplay, Nametags, RelicHelper, RerollProtector,
             Script, TitleManager
         )
 

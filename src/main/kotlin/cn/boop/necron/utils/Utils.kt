@@ -57,6 +57,18 @@ fun leftClick() {
     KeyMapping.set(actualKey, false)
 }
 
+fun clickKey(key: KeyMapping) {
+    val actualKey = (key as KeyMappingAccessor).boundKey
+    KeyMapping.set(actualKey, true)
+    KeyMapping.click(actualKey)
+    KeyMapping.set(actualKey, false)
+}
+
+fun holdKey(key: KeyMapping, holding: Boolean) {
+    val actualKey = (key as KeyMappingAccessor).boundKey
+    KeyMapping.set(actualKey, holding)
+}
+
 fun findItemByID(itemID: String?): Int {
     if (itemID.isNullOrEmpty()) return -1
     val player = mc.player ?: return -1
@@ -103,6 +115,28 @@ fun clickPlayerInventorySlot(slot: Int, containerId: Int): Boolean {
         mc.gameMode?.handleInventoryMouseClick(containerId, actualSlot, 0, ClickType.PICKUP, player)
     }
     return true
+}
+
+fun getScoreboard(): List<String> {
+    val scoreboard = mc.level?.scoreboard ?: return emptyList()
+    val objective = scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR) ?: return emptyList()
+
+    val scores = scoreboard.listPlayerScores(objective)
+    val title = objective.displayName.cleanString
+
+    val lines = scores.sortedBy { it.value() }.reversed().mapNotNull { entry ->
+            val owner = entry.owner
+            val team = scoreboard.getPlayersTeam(owner)
+            val formattedName = PlayerTeam.formatNameForTeam(team, entry.ownerName())
+            formattedName.legacy
+        }
+
+    return listOf(title) + lines
+}
+
+fun getTabList(): List<String> {
+    val connection = mc.connection ?: return emptyList()
+    return connection.listedOnlinePlayers.sortedBy { it.tabListOrder }.mapNotNull { playerInfo -> playerInfo.tabListDisplayName?.legacy }
 }
 
 fun isNormalRod(slot: Int): Boolean =
