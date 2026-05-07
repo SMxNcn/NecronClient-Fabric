@@ -1,10 +1,9 @@
 package cn.boop.necron.features.impl.necron
 
 import cn.boop.necron.events.GardenEvent
+import cn.boop.necron.utils.*
 import cn.boop.necron.utils.EquipmentUtils.swapEquipment
-import cn.boop.necron.utils.NCategory
 import cn.boop.necron.utils.WardrobeUtils.swapArmorTo
-import cn.boop.necron.utils.modMessage
 import cn.boop.necron.utils.screen.ActionInputScreen
 import cn.boop.necron.utils.waypoints.FarmingWaypoints
 import com.odtheking.odin.OdinMod
@@ -35,16 +34,18 @@ object FarmingHelper : Module(
     category = NCategory.NECRON
 ) {
     private val allowEdits by BooleanSetting("Allow Edits", false, desc = "Right-click blocks to add/remove waypoints.")
-    private val allowKeyEdit by BooleanSetting("Allow Key Edit", false, desc = "Shift and Right-click blocks to edit waypoint keys.").withDependency { allowEdits }
     private val renderWps by BooleanSetting("Render Waypoints", true, desc = "Render waypoints.")
-    private val renderOnFarming by BooleanSetting("Render on Farming", false, desc = "Stop render if CropNuker is enabled.")
+    private val renderOnFarming by BooleanSetting("Render on Farming", false, desc = "Render waypoints when CropNuker is disabled.")
 
     private val armorDropdown by DropdownSetting("Armor & Equipment")
     private val mossyArmorSlot by NumberSetting("Mossy Slot", 1, 1, 9, desc = "Mossy armor wardrobe slot.").withDependency { armorDropdown }
     private val mantidArmorSlot by NumberSetting("Mantid Slot", 2, 1, 9, desc = "Mantid armor wardrobe slot.").withDependency { armorDropdown }
     private val ffEquipmentType by SelectorSetting("Equipment Type", "Blossom", listOf("Lotus", "Blossom"), desc = "Equipment Type").withDependency { armorDropdown }
 
-    private val autoKick by BooleanSetting("Auto Kick", false, desc = "Auto Kick player who visiting your garden.")
+    private val otherDropdown by DropdownSetting("Settings")
+    private val autoKick by BooleanSetting("Auto Kick", false, desc = "Auto Kick player who visiting your garden.").withDependency { otherDropdown }
+    private val autoUseMat by BooleanSetting("Auto Snap", false, desc = "Auto use Mousemat item on warp back.").withDependency { otherDropdown }
+    private val ignorePests by BooleanSetting("Ignore Pests", false, desc = "CropNuker will not respond to pest ready/spawned/killed events.").withDependency { otherDropdown }
 
     private val nukerKeybind by KeybindSetting("Nuker Keybind", GLFW.GLFW_KEY_X, desc = "Keybind to toggle nuker.").onPress {
         CropNuker.toggleNuker()
@@ -54,6 +55,8 @@ object FarmingHelper : Module(
     private val blossomIds = listOf("BLOSSOM_NECKLACE", "BLOSSOM_CLOAK", "BLOSSOM_BELT", "BLOSSOM_BRACELET")
     private val pestIds = listOf("PESTHUNTERS_NECKLACE", "PEST_VEST", "PESTHUNTERS_BELT", "PESTHUNTERS_GLOVES")
     val specialItemList = listOf("SQUEAKY_MOUSEMAT", "ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID")
+
+    private var lastHeldSlot: Int = -1
 
     init {
         on<TickEvent.End> {
@@ -76,7 +79,7 @@ object FarmingHelper : Module(
             if (!allowEdits || key.value != GLFW.GLFW_MOUSE_BUTTON_RIGHT || mc.screen != null) return@on
             if (LocationUtils.currentArea == Island.Garden) {
                 val pos = reachPosition ?: return@on
-                if (allowKeyEdit && mc.player?.isCrouching == true && mc.screen == null) {
+                if (mc.player?.isCrouching == true && mc.screen == null) {
                     val currentAction = FarmingWaypoints.currentWaypoints.find { it.blockPos == pos }?.action ?: FarmingWaypoints.Action()
                     mc.setScreen(ActionInputScreen(currentAction) { newAction ->
                         FarmingWaypoints.updateAt(pos, newAction)
@@ -96,11 +99,16 @@ object FarmingHelper : Module(
         }
 
         on<GardenEvent.PestReady> {
+            if (ignorePests) return@on
+            val player = mc.player ?: return@on
+            lastHeldSlot = player.inventory.selectedSlot
+
             if (!CropNuker.enabled) return@on
-            CropNuker.stop()
+
             OdinMod.scope.launch {
+                CropNuker.stop()
                 if (swapArmorTo(mantidArmorSlot)) {
-                    delay(200 + (0..100).random().toLong())
+                    delay(randomDelay(200, 100))
                     if (swapEquipment(pestIds)) {
                         delay(100)
                         CropNuker.start()
@@ -110,8 +118,7 @@ object FarmingHelper : Module(
         }
 
         on<GardenEvent.PestSpawned> {
-            if (!CropNuker.enabled) return@on
-            CropNuker.stop()
+            if (!CropNuker.enabled || ignorePests) return@on
 
             val eqList = when (ffEquipmentType) {
                 0 -> lotusIds.toList()
@@ -119,11 +126,12 @@ object FarmingHelper : Module(
             }
 
             OdinMod.scope.launch {
+                CropNuker.stop()
                 sendCommand("setspawn")
-                delay(250 + (0..50).random().toLong())
+                delay(randomDelay(250, 50))
 
                 if (swapArmorTo(mossyArmorSlot)) {
-                    delay(200 + (0..100).random().toLong())
+                    delay(randomDelay(200, 100))
                     if (swapEquipment(eqList)) {
                         delay(50)
                         sendCommand("tptoplot $plot")
@@ -133,11 +141,27 @@ object FarmingHelper : Module(
         }
 
         on<GardenEvent.PestKilled> {
-            if (CropNuker.enabled) return@on
-            schedule(4) {
+            if (CropNuker.enabled || ignorePests) return@on
+            val player = mc.player ?: return@on
+
+            OdinMod.scope.launch {
+                delay(200)
                 sendCommand("warp garden")
-                modMessage("Pest killed.")
-                schedule(2) { CropNuker.start() }
+                if (autoUseMat) {
+                    delay(randomDelay(450, 50))
+                    val slot = findItemByID(specialItemList[0], true)
+                    if (slot == -1) return@launch
+                    player.inventory.selectedSlot = slot
+                    delay(randomDelay(250, 50))
+                    leftClick()
+                    delay(randomDelay(250, 50))
+                    player.inventory.selectedSlot = if (lastHeldSlot == -1) 0 else lastHeldSlot
+                    delay(randomDelay(650, 100))
+                    CropNuker.start()
+                } else {
+                    delay(randomDelay(650, 100))
+                    CropNuker.start()
+                }
             }
         }
 

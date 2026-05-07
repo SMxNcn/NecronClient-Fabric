@@ -1,7 +1,9 @@
 package cn.boop.necron.events
 
 import cn.boop.necron.features.impl.necron.FarmingHelper.specialItemList
+import cn.boop.necron.utils.clean
 import cn.boop.necron.utils.getScoreboard
+import cn.boop.necron.utils.network.MayorData
 import cn.boop.necron.utils.network.MayorData.pestSpawnCooldown
 import com.odtheking.odin.OdinMod.mc
 import com.odtheking.odin.events.ChatPacketEvent
@@ -22,7 +24,7 @@ import java.util.*
 object CustomEventDispatcher {
     private val visitRegex = Regex("\\[SkyBlock] (?:\\[.*?] )?(.*?) is visiting Your Garden!")
     private val pestSpawnRegex = Regex("^YUCK! \\d ൠ Pest have spawned in Plot - (\\d{1,2})!")
-    private val plotPestRegex = Regex("Plot - \\d+ ൠ x(.*)")
+    private val plotPestRegex = Regex("Plot - \\d+ ൠ x(\\d)")
     private var lastPestCount = -1
     private var tickCount = 0
 
@@ -35,11 +37,13 @@ object CustomEventDispatcher {
             tickCount++
             if (tickCount % 4 != 0) return@on
 
+            //println(getScoreboard())
             val currentPestCount = getScoreboard().firstNotNullOfOrNull {
-                line -> plotPestRegex.find(line)?.groupValues[1]?.toIntOrNull()
+                line -> plotPestRegex.find(line.clean)?.groupValues[1]?.trim()?.toIntOrNull()
             } ?: 0
 
             if (lastPestCount != -1 && currentPestCount < lastPestCount) {
+                println("$lastPestCount -> $currentPestCount")
                 GardenEvent.PestKilled().postAndCatch()
             }
 
@@ -59,6 +63,8 @@ object CustomEventDispatcher {
                     GardenEvent.PestReady().postAndCatch()
                 }
             }
+
+            if (value.contains("Everybody unlocks exclusive perks!")) MayorData.fetchData()
         }
 
         on<WorldEvent.Load> {
