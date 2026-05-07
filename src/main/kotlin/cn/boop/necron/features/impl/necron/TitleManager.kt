@@ -10,7 +10,6 @@ import com.odtheking.odin.features.Module
 import com.odtheking.odin.utils.skyblock.Island
 import com.odtheking.odin.utils.skyblock.LocationUtils
 import com.odtheking.odin.utils.skyblock.dungeon.DungeonUtils
-import org.lwjgl.glfw.GLFW
 
 object TitleManager : Module (
     name = "Title Manager",
@@ -23,17 +22,7 @@ object TitleManager : Module (
     private val displayPlayer by BooleanSetting("Player Name", false, desc = "Player name").withDependency { dropdown }
     private val windowIcon by BooleanSetting("Window Icon", false, desc = "Restart the game to apply icon changes").withDependency { dropdown }
 
-    fun updateTitle() {
-        val window = OdinMod.mc.window ?: return
-        val handler = window.handle()
-        val newTitle = buildTitle()
-        if (handler != 0L) {
-            try {
-                GLFW.glfwSetWindowTitle(window.handle(), newTitle)
-            } catch (_: Exception) {}
-        }
-    }
-
+    @JvmStatic
     fun buildTitle(): String {
         val sb = StringBuilder(titleText)
         var locationText = LocationUtils.currentArea.displayName

@@ -16,6 +16,7 @@
     "MixinEntity",
     "MixinGuiGraphics",
     "MixinLivingEntityRenderer",
+    "MixinMinecraft",
     "MixinWindow",
     "terminals.MixinPanesHandler",
     "terminals.MixinSelectAllHandler",

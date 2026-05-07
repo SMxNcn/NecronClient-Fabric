@@ -1,9 +1,6 @@
 package cn.boop.necron
 
-import cn.boop.necron.commands.autoSellCommand
-import cn.boop.necron.commands.necronChatCommand
-import cn.boop.necron.commands.necronCommand
-import cn.boop.necron.commands.nwpCommand
+import cn.boop.necron.commands.*
 import cn.boop.necron.events.CustomEventDispatcher
 import cn.boop.necron.features.impl.necron.*
 import cn.boop.necron.utils.EquipmentUtils
@@ -14,7 +11,6 @@ import com.odtheking.odin.events.core.EventBus
 import com.odtheking.odin.features.ModuleManager
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.loader.api.FabricLoader
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -40,11 +36,5 @@ object Necron : ClientModInitializer {
             HurtCamera, ItemStarDisplay, Nametags, RelicHelper, RerollProtector,
             TitleManager
         )
-
-        ClientTickEvents.START_CLIENT_TICK.register { _ ->
-            if (TitleManager.enabled) {
-                TitleManager.updateTitle()
-            }
-        }
     }
 }
