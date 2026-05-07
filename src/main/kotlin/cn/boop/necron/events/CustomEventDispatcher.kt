@@ -37,13 +37,11 @@ object CustomEventDispatcher {
             tickCount++
             if (tickCount % 4 != 0) return@on
 
-            //println(getScoreboard())
             val currentPestCount = getScoreboard().firstNotNullOfOrNull {
                 line -> plotPestRegex.find(line.clean)?.groupValues[1]?.trim()?.toIntOrNull()
             } ?: 0
 
-            if (lastPestCount != -1 && currentPestCount < lastPestCount) {
-                println("$lastPestCount -> $currentPestCount")
+            if (lastPestCount > 0 && currentPestCount == 0) {
                 GardenEvent.PestKilled().postAndCatch()
             }
 

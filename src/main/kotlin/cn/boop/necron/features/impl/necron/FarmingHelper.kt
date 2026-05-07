@@ -110,7 +110,7 @@ object FarmingHelper : Module(
                 if (swapArmorTo(mantidArmorSlot)) {
                     delay(randomDelay(200, 100))
                     if (swapEquipment(pestIds)) {
-                        delay(100)
+                        delay(randomDelay(100, 50))
                         CropNuker.start()
                     }
                 }
@@ -133,7 +133,7 @@ object FarmingHelper : Module(
                 if (swapArmorTo(mossyArmorSlot)) {
                     delay(randomDelay(200, 100))
                     if (swapEquipment(eqList)) {
-                        delay(50)
+                        delay(randomDelay(100, 50))
                         sendCommand("tptoplot $plot")
                     }
                 }
@@ -145,23 +145,25 @@ object FarmingHelper : Module(
             val player = mc.player ?: return@on
 
             OdinMod.scope.launch {
-                delay(200)
+                delay(100)
                 sendCommand("warp garden")
                 if (autoUseMat) {
-                    delay(randomDelay(450, 50))
+                    delay(randomDelay(400, 50))
                     val slot = findItemByID(specialItemList[0], true)
-                    if (slot == -1) return@launch
-                    player.inventory.selectedSlot = slot
-                    delay(randomDelay(250, 50))
-                    leftClick()
-                    delay(randomDelay(250, 50))
-                    player.inventory.selectedSlot = if (lastHeldSlot == -1) 0 else lastHeldSlot
-                    delay(randomDelay(650, 100))
-                    CropNuker.start()
-                } else {
-                    delay(randomDelay(650, 100))
-                    CropNuker.start()
+                    if (slot != 1 && slot in 0..9) {
+                        player.inventory.selectedSlot = slot
+                        delay(randomDelay(250, 50))
+                        leftClick()
+                    }
                 }
+
+                delay(randomDelay(350, 100))
+                player.inventory.selectedSlot = if (lastHeldSlot == -1) 0 else lastHeldSlot
+                mc.options.keyShift.isDown = true
+                delay(randomDelay(100, 50))
+                mc.options.keyShift.isDown = false
+                delay(randomDelay(150, 50))
+                CropNuker.start()
             }
         }
 
