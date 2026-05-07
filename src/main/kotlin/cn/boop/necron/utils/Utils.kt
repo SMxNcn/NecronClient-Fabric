@@ -156,3 +156,6 @@ fun isLeapItem(slot: Int): Boolean =
 fun findRodSlot(): Int = (0..8).firstOrNull { isNormalRod(it) } ?: -1
 
 fun findLeapSlot(): Int = (0..8).firstOrNull { isLeapItem(it) } ?: -1
+
+fun randomDelay(base: Int, variance: Int): Long =
+    base + (0..variance).random().toLong()

@@ -3,6 +3,7 @@ package cn.boop.necron.features.impl.necron
 import cn.boop.necron.utils.EquipmentUtils.swapEquipment
 import cn.boop.necron.utils.NCategory
 import cn.boop.necron.utils.findRodSlot
+import cn.boop.necron.utils.randomDelay
 import cn.boop.necron.utils.rightClick
 import com.odtheking.odin.OdinMod
 import com.odtheking.odin.clickgui.settings.Setting.Companion.withDependency
@@ -42,13 +43,13 @@ object AutoSwap : Module(
 
     private suspend fun handleBonzo() {
         val delayTime = if (useCustomDelay) spiritDelay.toInt() else 250
-        delay(delayTime + (0..99).random().toLong())
+        delay(randomDelay(delayTime, 100))
 
         if (Auto4.isDeviceIncomplete()) Auto4.pauseShooting()
-        delay(100)
+        delay(randomDelay(100, 50))
 
         if (swapEquipment(listOf("SPIRIT_MASK"))) {
-            delay(50)
+            delay(randomDelay(50, 50))
             if (Auto4.isDeviceIncomplete()) Auto4.resumeShooting()
         }
     }
@@ -59,15 +60,15 @@ object AutoSwap : Module(
         if (rodSlot == -1) return
 
         val delayTime = if (useCustomDelay) phoenixDelay.toInt() else 250
-        delay(delayTime + (0..99).random().toLong())
+        delay(randomDelay(delayTime, 100))
 
         if (Auto4.isDeviceIncomplete()) Auto4.pauseShooting()
-        delay(100)
+        delay(randomDelay(100, 50))
 
         mc.player?.inventory?.selectedSlot = rodSlot
-        delay(160 + (0..40).random().toLong())
+        delay(randomDelay(160, 40))
         rightClick()
-        delay(160 + (0..40).random().toLong())
+        delay(randomDelay(160, 40))
         mc.player?.inventory?.selectedSlot = lastSlot
         delay(50)
 
