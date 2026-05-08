@@ -1,8 +1,8 @@
 package cn.boop.necron.events
 
 import cn.boop.necron.features.impl.necron.FarmingHelper.specialItemList
-import cn.boop.necron.utils.clean
-import cn.boop.necron.utils.getScoreboard
+import cn.boop.necron.utils.getCurrentPestCount
+import cn.boop.necron.utils.getCurrentPlot
 import cn.boop.necron.utils.network.MayorData
 import cn.boop.necron.utils.network.MayorData.pestSpawnCooldown
 import com.odtheking.odin.OdinMod.mc
@@ -24,25 +24,21 @@ import java.util.*
 object CustomEventDispatcher {
     private val visitRegex = Regex("\\[SkyBlock] (?:\\[.*?] )?(.*?) is visiting Your Garden!")
     private val pestSpawnRegex = Regex("^YUCK! \\d ൠ Pest have spawned in Plot - (\\d{1,2})!")
-    private val plotPestRegex = Regex("Plot - \\d+ ൠ x(\\d)")
+    private var activePestPlot = -1
     private var lastPestCount = -1
-    private var tickCount = 0
 
     init {
         on<TickEvent.End> {
-            if (LocationUtils.currentArea != Island.Garden) {
-                lastPestCount = -1
-                return@on
-            }
-            tickCount++
-            if (tickCount % 4 != 0) return@on
+            if (activePestPlot == -1) return@on
 
-            val currentPestCount = getScoreboard().firstNotNullOfOrNull {
-                line -> plotPestRegex.find(line.clean)?.groupValues[1]?.trim()?.toIntOrNull()
-            } ?: 0
+            val currentPlot = getCurrentPlot() ?: return@on
+            if (currentPlot != activePestPlot) return@on
+
+            val currentPestCount = getCurrentPestCount(activePestPlot)
 
             if (lastPestCount > 0 && currentPestCount == 0) {
                 GardenEvent.PestKilled().postAndCatch()
+                activePestPlot = -1
             }
 
             lastPestCount = currentPestCount
@@ -55,8 +51,9 @@ object CustomEventDispatcher {
             }
 
             pestSpawnRegex.find(value)?.let { pestMatcher ->
-                val spawnPlot = pestMatcher.groupValues[1].toInt()
-                GardenEvent.PestSpawned(spawnPlot).postAndCatch()
+                activePestPlot = pestMatcher.groupValues[1].toInt()
+                GardenEvent.PestSpawned(activePestPlot).postAndCatch()
+
                 schedule((pestSpawnCooldown - 10) * 20, true) {
                     GardenEvent.PestReady().postAndCatch()
                 }

@@ -14,7 +14,7 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.scores.DisplaySlot
 import net.minecraft.world.scores.PlayerTeam
 
-val ncPrefix: Component = coloredChar("N", 0x44aaf8)
+private val ncPrefix: Component = coloredChar("N", 0x44aaf8)
     .append(coloredChar("e", 0x47bbf9))
     .append(coloredChar("c", 0x4bccfb))
     .append(coloredChar("r", 0x4eddfc))
@@ -159,3 +159,17 @@ fun findLeapSlot(): Int = (0..8).firstOrNull { isLeapItem(it) } ?: -1
 
 fun randomDelay(base: Int, variance: Int): Long =
     base + (0..variance).random().toLong()
+
+fun getCurrentPlot(): Int? {
+    val plotRegex = Regex("Plot - (\\d+)")
+    return getScoreboard().firstNotNullOfOrNull { line ->
+        plotRegex.find(line.clean)?.groupValues[1]?.toIntOrNull()
+    }
+}
+
+fun getCurrentPestCount(plot: Int): Int {
+    val pestRegex = Regex("Plot - $plot(?: ൠ x(\\d+))?")
+    return getScoreboard().firstNotNullOfOrNull { line ->
+        pestRegex.find(line.clean)?.groupValues?.getOrNull(1)?.toIntOrNull()
+    } ?: 0
+}

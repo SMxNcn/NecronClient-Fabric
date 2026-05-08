@@ -110,9 +110,13 @@ object FarmingHelper : Module(
                 if (swapArmorTo(mantidArmorSlot)) {
                     delay(randomDelay(200, 100))
                     if (swapEquipment(pestIds)) {
-                        delay(randomDelay(100, 50))
+                        delay(randomDelay(250, 50))
                         CropNuker.start()
+                    } else {
+                        modMessage("§cMissing equipments!")
                     }
+                } else {
+                    modMessage("§cFailed to equip armor from Wardrobe #$mantidArmorSlot!")
                 }
             }
         }
@@ -133,9 +137,13 @@ object FarmingHelper : Module(
                 if (swapArmorTo(mossyArmorSlot)) {
                     delay(randomDelay(200, 100))
                     if (swapEquipment(eqList)) {
-                        delay(randomDelay(100, 50))
+                        delay(randomDelay(200, 50))
                         sendCommand("tptoplot $plot")
+                    } else {
+                        modMessage("§cMissing equipments!")
                     }
+                } else {
+                    modMessage("§cFailed to equip armor from Wardrobe #$mossyArmorSlot!")
                 }
             }
         }
@@ -157,12 +165,12 @@ object FarmingHelper : Module(
                     }
                 }
 
-                delay(randomDelay(350, 100))
+                delay(randomDelay(550, 100))
                 player.inventory.selectedSlot = if (lastHeldSlot == -1) 0 else lastHeldSlot
                 mc.options.keyShift.isDown = true
                 delay(randomDelay(100, 50))
                 mc.options.keyShift.isDown = false
-                delay(randomDelay(150, 50))
+                delay(randomDelay(250, 50))
                 CropNuker.start()
             }
         }
