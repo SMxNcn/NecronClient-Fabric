@@ -1,6 +1,7 @@
 package cn.boop.necron.events
 
 import cn.boop.necron.features.impl.necron.FarmingHelper.specialItemList
+import cn.boop.necron.utils.clean
 import cn.boop.necron.utils.getCurrentPestCount
 import cn.boop.necron.utils.getCurrentPlot
 import cn.boop.necron.utils.network.MayorData
@@ -23,13 +24,13 @@ import java.util.*
 
 object CustomEventDispatcher {
     private val visitRegex = Regex("\\[SkyBlock] (?:\\[.*?] )?(.*?) is visiting Your Garden!")
-    private val pestSpawnRegex = Regex("^YUCK! \\d ൠ Pest have spawned in Plot - (\\d{1,2})!")
+    private val pestSpawnRegex = Regex("(?:A ൠ Pest has appeared|\\d+ ൠ Pest have spawned) in Plot - (\\d{1,2})!")
     private var activePestPlot = -1
     private var lastPestCount = -1
 
     init {
         on<TickEvent.End> {
-            if (activePestPlot == -1) return@on
+            if (LocationUtils.currentArea != Island.Garden || activePestPlot == -1) return@on
 
             val currentPlot = getCurrentPlot() ?: return@on
             if (currentPlot != activePestPlot) return@on
@@ -45,12 +46,14 @@ object CustomEventDispatcher {
         }
 
         on<ChatPacketEvent> {
-            visitRegex.find(value)?.let { visitMatcher ->
+            if (LocationUtils.currentArea != Island.Garden) return@on
+
+            visitRegex.find(value.clean)?.let { visitMatcher ->
                 val playerName = visitMatcher.groupValues[1].trim()
                 GardenEvent.GuestVisit(playerName).postAndCatch()
             }
 
-            pestSpawnRegex.find(value)?.let { pestMatcher ->
+            pestSpawnRegex.find(value.clean)?.let { pestMatcher ->
                 activePestPlot = pestMatcher.groupValues[1].toInt()
                 GardenEvent.PestSpawned(activePestPlot).postAndCatch()
 
@@ -59,10 +62,10 @@ object CustomEventDispatcher {
                 }
             }
 
-            if (value.contains("Everybody unlocks exclusive perks!")) MayorData.fetchData()
+            if (value.clean.contains("Everybody unlocks exclusive perks!")) MayorData.fetchData()
         }
 
-        on<WorldEvent.Load> {
+        on<WorldEvent.Unload> {
             GardenEvent.FailSafe("World Change").postAndCatch()
         }
 
