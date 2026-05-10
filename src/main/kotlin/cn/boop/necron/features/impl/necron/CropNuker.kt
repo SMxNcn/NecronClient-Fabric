@@ -95,4 +95,8 @@ object CropNuker {
         holdKey(mc.options.keyRight, false)
         holdKey(mc.options.keyAttack, false)
     }
+
+    fun setCurrentActionId(index: Int) {
+        currentActionId = index
+    }
 }
