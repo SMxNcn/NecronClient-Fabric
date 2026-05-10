@@ -49,12 +49,12 @@ object FarmingWaypoints {
 
     fun load(filename: String) {
         activeFile = filename
+        currentWaypoints.clear()
         OdinMod.scope.launch(Dispatchers.IO) {
             val file = File(Necron.configDir, "necron/waypoints/$filename.json")
             if (!file.exists()) {
                 file.parentFile.mkdirs()
                 file.createNewFile()
-                currentWaypoints.clear()
                 modMessage("§7Created & loaded empty waypoint file: §b$filename.json")
                 return@launch
             }
@@ -65,7 +65,7 @@ object FarmingWaypoints {
                 currentWaypoints.clear()
                 currentWaypoints.addAll(loaded)
                 reindexWaypoints()
-                modMessage("§aLoaded ${currentWaypoints.size} waypoints from §b$filename")
+                modMessage("§7Loaded ${currentWaypoints.size} waypoints from §b$filename.json")
             } catch (e: Exception) {
                 modMessage("§cFailed to load waypoints: ${e.message}")
                 e.printStackTrace()
@@ -75,6 +75,7 @@ object FarmingWaypoints {
 
     fun unload() {
         currentWaypoints.clear()
+        activeFile = ""
         modMessage("§cWaypoints unloaded.")
     }
 
@@ -114,6 +115,7 @@ object FarmingWaypoints {
             modMessage("§cNo active waypoint file.")
             return
         }
+        currentWaypoints.clear()
         OdinMod.scope.launch(Dispatchers.IO) {
             val file = File(Necron.configDir, "necron/waypoints/$activeFile.json")
             if (!file.exists()) {
@@ -126,7 +128,6 @@ object FarmingWaypoints {
                 val loaded: List<WaypointData> = gson.fromJson(FileReader(file), type)
 
                 val newWaypoints = loaded.toMutableList()
-                currentWaypoints.clear()
                 currentWaypoints.addAll(newWaypoints)
                 reindexWaypoints()
 
