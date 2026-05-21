@@ -2,16 +2,18 @@
 
 Manage and automate movement with waypoint files for the Garden.
 
+Interactive tool for generating farming waypoint: [Waypoint Generator](https://github.com/SMxNcn/WaypointGenerator)
+
 ---
 
 ## Commands (`/nwp`)
 
-| Command            | Description                                           |
-|--------------------|-------------------------------------------------------|
-| `/nwp list`        | List all waypoint files in `config/necron/waypoints/` |
-| `/nwp load <file>` | Load a waypoint file (creates it if missing)          |
-| `/nwp reload`      | Reload the active waypoint file                       |
-| `/nwp unload`      | Clear all loaded waypoints                            |
+| Command            | Description                                                                       |
+|--------------------|-----------------------------------------------------------------------------------|
+| `/nwp list`        | List all waypoint files in `config/necron/waypoints/`                             |
+| `/nwp load <file>` | Load a waypoint file by name (no `.json` extension needed; creates it if missing) |
+| `/nwp reload`      | Reload the active waypoint file                                                   |
+| `/nwp unload`      | Clear all loaded waypoints                                                        |
 
 ---
 
