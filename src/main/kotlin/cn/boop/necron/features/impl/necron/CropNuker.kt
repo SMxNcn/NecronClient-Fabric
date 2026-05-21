@@ -28,7 +28,9 @@ object CropNuker {
             return
         }
         enabled = true
-        currentActionId = if (lastActionId == -1) waypoints.first().id else lastActionId
+        currentActionId = if (lastActionId != -1 && waypoints.any { it.id == lastActionId })
+            lastActionId
+        else waypoints.first().id
         lastActionId = -1
         hasCompleted = false
     }
