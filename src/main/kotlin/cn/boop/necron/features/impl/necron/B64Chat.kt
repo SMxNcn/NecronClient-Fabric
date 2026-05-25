@@ -1,13 +1,12 @@
 package cn.boop.necron.features.impl.necron
 
-import cn.boop.necron.utils.B64Utils
 import cn.boop.necron.utils.NCategory
 import cn.boop.necron.utils.cleanString
 import cn.boop.necron.utils.legacy
 import cn.boop.necron.utils.modMessage
-import cn.boop.necron.utils.network.WebSocketMessageHandler.handleRareDrop
 import cn.boop.necron.utils.network.WSClient
 import cn.boop.necron.utils.network.WebSocketManager
+import cn.boop.necron.utils.network.WebSocketMessageHandler.handleRareDrop
 import cn.boop.necron.utils.network.WebSocketMessageHandler.handleWsJoin
 import com.odtheking.odin.OdinMod
 import com.odtheking.odin.clickgui.settings.impl.BooleanSetting
@@ -18,6 +17,7 @@ import com.odtheking.odin.features.Module
 import com.odtheking.odin.utils.handlers.schedule
 import com.odtheking.odin.utils.skyblock.LocationUtils
 import net.minecraft.network.chat.Component
+import top.nckim.utils.Base64Utils
 
 object B64Chat : Module(
     name = "B64 Chat",
@@ -43,7 +43,7 @@ object B64Chat : Module(
                 var endIndex = value.indexOf("%]")
                 if (endIndex != -1) {
                     var encodePart = value.substring(startIndex, endIndex + 2)
-                    val decodedResult = B64Utils.decodeWithOffset(encodePart) ?: return@on
+                    val decodedResult = Base64Utils.decodeWithOffset(encodePart) ?: return@on
                     val text = Component.literal("§bN §8»§r " + message.replace(encodePart, decodedResult, true))
                     OdinMod.mc.execute { OdinMod.mc.gui?.chat?.addMessage(text) }
                 }
@@ -51,27 +51,38 @@ object B64Chat : Module(
         }
 
         on<WorldEvent.Load> {
-            if (WSClient.isConnected) return@on
             schedule(40) {
-                handleWsJoin(lastIsland, lastLobbyId)
+                if (WSClient.isConnected) {
+                    val currentIsland = LocationUtils.currentArea.name
+                    val currentLobby = LocationUtils.lobbyId ?: "null"
+                    if (currentIsland != lastIsland || currentLobby != lastLobbyId) {
+                        val eventData = WebSocketManager.EventData(
+                            eventType = "server_change",
+                            details = mapOf(
+                                "fromIsland" to lastIsland,
+                                "toIsland" to currentIsland,
+                                "fromLobby" to lastLobbyId,
+                                "toLobby" to currentLobby
+                            )
+                        )
+                        WSClient.sendEvent(eventData)
+                        lastIsland = currentIsland
+                        lastLobbyId = currentLobby
+                    }
+                } else {
+                    handleWsJoin(lastIsland, lastLobbyId)
+                }
             }
         }
 
         on<WorldEvent.Unload> {
-            if (!WSClient.isConnected) return@on
-            val eventData = WebSocketManager.EventData(
-                eventType = "player_leave",
-                details = mapOf(
-                    "island" to lastIsland,
-                    "lobby" to lastLobbyId
-                )
-            )
-            WSClient.sendEvent(eventData)
-            WSClient.disconnect()
+            if (WSClient.isConnected) {
+                lastIsland = LocationUtils.currentArea.name
+            }
         }
 
         WSClient.onBroadcast = { serverMsg ->
-            val decoded = serverMsg.message?.let { B64Utils.decodeWithOffset(it) } ?: ""
+            val decoded = serverMsg.message?.let { Base64Utils.decodeWithOffset(it) } ?: serverMsg.message ?: ""
             val from = serverMsg.from?.ign ?: "Unknown"
             val text = Component.literal("§f$from§r: §f$decoded")
             modMessage(text.string, WSClient.PREFIX)
@@ -84,7 +95,7 @@ object B64Chat : Module(
             val displayText = when (eventData.eventType) {
                 "rare_drop" -> {
                     val itemName = eventData.details["itemName"] ?: "Unknown Item"
-                    "§f$from§r §7got $itemName"
+                    "§f$from§r §7got §8[§r$itemName§8]§r"
                 }
 
                 "reward" -> {
@@ -108,8 +119,7 @@ object B64Chat : Module(
 
         WSClient.onPlayerJoin = { serverMsg ->
             val from = serverMsg.from?.ign ?: "Unknown"
-            val island = serverMsg.data?.details?.get("island") ?: "Unknown"
-            val text = Component.literal("§a$from§e joined §7($island)")
+            val text = Component.literal("§a$from§e joined")
             modMessage(text.string, WSClient.PREFIX)
         }
 
@@ -135,14 +145,6 @@ object B64Chat : Module(
     override fun onDisable() {
         super.onDisable()
         if (WSClient.isConnected) {
-            val eventData = WebSocketManager.EventData(
-                eventType = "player_leave",
-                details = mapOf(
-                    "island" to lastIsland,
-                    "lobby" to lastLobbyId
-                )
-            )
-            WSClient.sendEvent(eventData)
             WSClient.disconnect()
         }
     }

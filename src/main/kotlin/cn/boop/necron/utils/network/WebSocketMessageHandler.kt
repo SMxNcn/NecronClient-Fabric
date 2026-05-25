@@ -8,7 +8,8 @@ import com.odtheking.odin.OdinMod.mc
 import com.odtheking.odin.utils.skyblock.LocationUtils
 
 object WebSocketMessageHandler {
-    private val DROP_REGEX = Regex("§[569acd]§l[A-Z ]+ [CD]ROP! (§[0-9a-f][^§].+?)(?:.(§[0-9a-f].+))?$") // https://regex101.com/r/gjcmZ4/5
+    private val NORMAL_DROP_REGEX = Regex("§[569acd]§l[A-Z ]+ [CD]ROP! (§[0-9a-f][^§].+?)(?:.(§[0-9a-f].+))?$") // https://regex101.com/r/gjcmZ4/5
+    private val SLAYER_DROP_REGEX = Regex("§[569acd]§l[A-Z ]+ DROP! §7\\((.+)§7\\)(?: (§[0-9a-f].+))?$") // https://regex101.com/r/JswV2I/1
     private val INFO_REGEX = Regex("(§[6b])([\\d,]+).*?([☘✯])") // https://regex101.com/r/l7v5P2/2
     private val DYE_REGEX = Regex("§r§d§lWOW! §r(.*?) §r§6found an? §r(§[0-9a-f])([^§]+?)Dye.*")
     private val PET_REGEX = Regex("§eWow! §r(.*?) §r§efound a §r§cPhoenix §r§epet!")
@@ -17,26 +18,33 @@ object WebSocketMessageHandler {
         if (!WSClient.isConnected) return
         val playerName = mc.player?.name?.string ?: return
 
-        DROP_REGEX.find(message)?.let { dropMatcher ->
+        NORMAL_DROP_REGEX.find(message)?.let { dropMatcher ->
             val itemName = dropMatcher.groupValues[1].trim()
-                .replace(Regex("^§7\\("), "")
-                .replace(Regex("§7\\)"), "")
             val dropInfo = dropMatcher.groupValues[2].trim()
                 .replace(Regex("§6\\+"), "+§6")
-            sendDrops("$itemName ${parseExtraInfo(dropInfo)}")
+            sendDrops(itemName, parseExtraInfo(dropInfo))
+            return
+        }
+
+        SLAYER_DROP_REGEX.find(message)?.let { dropMatcher ->
+            val itemName = dropMatcher.groupValues[1].trim()
+            val count = if (Regex("(§7[\\d+]*x)").find(itemName) != null) {
+                dropMatcher.groupValues[2].trim()
+            } else ""
+            sendDrops("$count $itemName", parseExtraInfo(dropMatcher.groupValues[2]))
             return
         }
 
         PET_REGEX.find(message)?.let { petMatcher ->
             if (petMatcher.groupValues[1].clean == playerName) {
-                sendDrops("§cPhoenix Pet")
+                sendDrops("§cPhoenix Pet", "")
             }
             return
         }
 
         DYE_REGEX.find(message)?.let { dyeMatcher ->
             if (dyeMatcher.groupValues[1].clean == playerName) {
-                sendDrops("${dyeMatcher.groupValues[2]}${dyeMatcher.groupValues[3]}Dye")
+                sendDrops("${dyeMatcher.groupValues[2]}${dyeMatcher.groupValues[3]}Dye", "")
             }
             return
         }
@@ -51,7 +59,6 @@ object WebSocketMessageHandler {
                 "chestName" to chestName
             )
         )
-
         WSClient.sendEvent(eventData)
     }
 
@@ -86,6 +93,8 @@ object WebSocketMessageHandler {
 
     private fun parseExtraInfo(info: String): String {
         val infoMatcher = INFO_REGEX.find(info) ?: return ""
+        val itemCount = if (Regex("(§7[\\d+]*x)").find(info) != null) info.replace(Regex("(§7[\\d+]*x)"), "").trim()
+                    else info
         val countMatcher = Regex("(§8x[\\d,]+)").find(info)
         val statsPart = "${infoMatcher.groupValues[1].trim()}(${infoMatcher.groupValues[2].trim()}${infoMatcher.groupValues[3].trim()})"
 
@@ -96,10 +105,13 @@ object WebSocketMessageHandler {
         }
     }
 
-    private fun sendDrops(itemName: String) {
+    private fun sendDrops(itemName: String, extraInfo: String) {
         val eventData = WebSocketManager.EventData(
             eventType = "rare_drop",
-            details = mapOf("itemName" to itemName)
+            details = mapOf(
+                "itemName" to itemName,
+                "extraInfo" to extraInfo
+            )
         )
         WSClient.sendEvent(eventData)
     }

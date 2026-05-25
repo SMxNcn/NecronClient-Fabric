@@ -25,9 +25,12 @@ dependencies {
 
     modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:${property("devauth_version")}")
     modImplementation(":odin-${property("odin_version")}")
+    modImplementation(":ws-core-1.0.0")
 
     modImplementation("com.github.stivais:Commodore:${property("commodore_version")}")
     modImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+
+    include(":ws-core-1.0.0")
 
     property("minecraft_lwjgl_version").let { lwjglVersion ->
         modImplementation("org.lwjgl:lwjgl-nanovg:$lwjglVersion")

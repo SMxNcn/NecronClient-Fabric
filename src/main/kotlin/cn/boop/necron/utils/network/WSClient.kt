@@ -1,42 +1,26 @@
 package cn.boop.necron.utils.network
 
 import cn.boop.necron.Necron
-import cn.boop.necron.utils.modMessage
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.Strictness
+import com.google.gson.JsonObject
 import com.odtheking.odin.OdinMod.mc
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.WebSocket
-import java.nio.ByteBuffer
-import java.nio.charset.StandardCharsets
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletionStage
-import java.util.concurrent.atomic.AtomicReference
+import top.nckim.ws.WsClient
+import top.nckim.ws.WsConfig
+import top.nckim.ws.WsConnectionState
+import top.nckim.ws.WsListener
 
 object WSClient {
     const val PREFIX = "§bWS §8»§r "
-    private val gson: Gson = GsonBuilder().setStrictness(Strictness.LENIENT).create()
 
-    private val wsRef = AtomicReference<WebSocket?>(null)
-    private val httpClient = HttpClient.newHttpClient()
-
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    private var heartbeatJob: Job? = null
-    private var reconnectJob: Job? = null
+    private var wsClient: WsClient? = null
 
     var playerUUID: String = ""
     var playerIGN: String = ""
 
-    val isConnected: Boolean get() = wsRef.get() != null
+    val isConnected: Boolean
+        get() = wsClient?.let {
+            val state = it.getConnectionState()
+            state == WsConnectionState.CONNECTED
+        } ?: false
 
     var onBroadcast: ((WebSocketManager.ServerMessage) -> Unit)? = null
     var onEvent: ((WebSocketManager.ServerMessage) -> Unit)? = null
@@ -49,136 +33,106 @@ object WSClient {
     }
 
     fun connect() {
-        if (isConnected) {
-            Necron.logger.info("WS already connected.")
-            return
+        if (isConnected) return
+
+        val session = mc.player
+        if (playerUUID.isEmpty() && session != null) {
+            playerUUID = session.stringUUID
+            playerIGN = session.name?.string ?: "Player"
         }
 
-        val listener = WSListener()
-        httpClient.newWebSocketBuilder()
-            .buildAsync(URI.create(WSConfig.SERVER_URL), listener)
-            .exceptionally { error ->
-                Necron.logger.info("Connect failed: ${error.message}")
-                scheduleReconnect()
-                null
-            }
+        val island = try {
+            com.odtheking.odin.utils.skyblock.LocationUtils.currentArea.name
+        } catch (_: Exception) {
+            "Unknown"
+        }
+
+        val config = WsConfig(
+            source = "necronclient:0.0.2",
+            playerUuid = playerUUID,
+            playerIgn = playerIGN,
+            island = island
+        )
+
+        wsClient = WsClient(
+            config, serverUrl = WSConfig.SERVER_URL
+        ).apply {
+            addListener(object : WsListener {
+                override fun onConnected(onlineCount: Int) {
+                    Necron.logger.info("Connected to WebSocket server (online: $onlineCount).")
+                }
+
+                override fun onDisconnected() {
+                    Necron.logger.info("WS Disconnected.")
+                }
+
+                override fun onChatReceived(ign: String, content: String) {
+                    val msg = WebSocketManager.ServerMessage(
+                        type = "broadcast",
+                        timestamp = System.currentTimeMillis(),
+                        from = WebSocketManager.UserInfo(uuid = "", ign = ign),
+                        message = content
+                    )
+                    onBroadcast?.invoke(msg)
+                }
+
+                override fun onEventReceived(ign: String, eventType: String, data: JsonObject) {
+                    val details = mutableMapOf<String, String?>()
+                    data.keySet().forEach { key ->
+                        val el = data.get(key)
+                        details[key] = if (el.isJsonNull) null else el.asString
+                    }
+                    val msg = WebSocketManager.ServerMessage(
+                        type = "event",
+                        timestamp = System.currentTimeMillis(),
+                        from = WebSocketManager.UserInfo(uuid = "", ign = ign),
+                        data = WebSocketManager.EventData(eventType, details)
+                    )
+                    onEvent?.invoke(msg)
+                }
+
+                override fun onPlayerJoin(ign: String) {
+                    val msg = WebSocketManager.ServerMessage(
+                        type = "player_join",
+                        timestamp = System.currentTimeMillis(),
+                        from = WebSocketManager.UserInfo(uuid = "", ign = ign)
+                    )
+                    onPlayerJoin?.invoke(msg)
+                }
+
+                override fun onPlayerLeave(ign: String) {
+                    val msg = WebSocketManager.ServerMessage(
+                        type = "player_leave",
+                        timestamp = System.currentTimeMillis(),
+                        from = WebSocketManager.UserInfo(uuid = "", ign = ign)
+                    )
+                    onPlayerLeave?.invoke(msg)
+                }
+
+                override fun onErrorReceived(code: String, message: String) {
+                    Necron.logger.error("WS Error: $code $message")
+                }
+            })
+            connect()
+        }
     }
 
     fun disconnect() {
-        stopHeartbeat()
-        reconnectJob?.cancel()
-        wsRef.getAndSet(null)?.sendClose(1000, "Client shutdown")?.join()
-        Necron.logger.info("WS Disconnected.")
+        wsClient?.shutdown()
+        wsClient = null
     }
 
     fun sendChat(content: String) {
-        if (!isConnected) return
-        val msg = WebSocketManager.ClientMessage.chat(playerUUID, playerIGN, content)
-        send(gson.toJson(msg))
+        wsClient?.sendChat(content)
     }
 
     fun sendEvent(eventData: WebSocketManager.EventData): Boolean {
-        if (!isConnected) return false
-        val msg = WebSocketManager.ClientMessage.event(playerUUID, playerIGN, eventData)
-        return send(gson.toJson(msg))
-    }
-
-    private fun send(payload: String): Boolean {
-        return wsRef.get()?.let { ws ->
-            ws.sendText(payload, true)
-            true
-        } ?: false
-    }
-
-    private fun sendConnect() {
-        val msg = mc.currentServer?.ip?.let { WebSocketManager.ClientMessage.connect(playerUUID, playerIGN, it) }
-        send(gson.toJson(msg))
-    }
-
-    private fun startHeartbeat() {
-        heartbeatJob?.cancel()
-        heartbeatJob = scope.launch {
-            while (isActive && isConnected) {
-                delay(WSConfig.HEARTBEAT_INTERVAL.toLong())
-                wsRef.get()?.sendText(
-                    gson.toJson(WebSocketManager.ClientMessage.ping(playerUUID, playerIGN)), true
-                )
-            }
+        val client = wsClient ?: return false
+        val data = JsonObject()
+        eventData.details.forEach { (key, value) ->
+            value?.let { data.addProperty(key, it) }
         }
-    }
-
-    private fun stopHeartbeat() {
-        heartbeatJob?.cancel()
-        heartbeatJob = null
-    }
-
-    private fun scheduleReconnect() {
-        reconnectJob?.cancel()
-        reconnectJob = scope.launch {
-            delay(WSConfig.RECONNECT_DELAY.toLong())
-            if (!isConnected) {
-                Necron.logger.info("Reconnecting...")
-                connect()
-            }
-        }
-    }
-
-    private class WSListener : WebSocket.Listener {
-        private val buffer = StringBuilder()
-
-        override fun onOpen(webSocket: WebSocket) {
-            Necron.logger.info("Connected to WebSocket server.")
-            wsRef.set(webSocket)
-            sendConnect()
-            startHeartbeat()
-            webSocket.request(1)
-        }
-
-        override fun onText(ws: WebSocket, data: CharSequence, last: Boolean): CompletionStage<*> {
-            buffer.append(data)
-            if (last) {
-                handleRawMessage(buffer.toString())
-                buffer.clear()
-            }
-            ws.request(1)
-            return CompletableFuture.completedFuture(null)
-        }
-
-        override fun onBinary(ws: WebSocket, data: ByteBuffer, last: Boolean): CompletionStage<*> {
-            val text = StandardCharsets.UTF_8.decode(data).toString()
-            handleRawMessage(text)
-            ws.request(1)
-            return CompletableFuture.completedFuture(null)
-        }
-
-        override fun onClose(ws: WebSocket, statusCode: Int, reason: String): CompletionStage<*> {
-            Necron.logger.info("Closed: $statusCode - $reason")
-            wsRef.compareAndSet(ws, null)
-            stopHeartbeat()
-            if (mc.level != null) scheduleReconnect()
-            return CompletableFuture.completedFuture(null)
-        }
-
-        override fun onError(ws: WebSocket, error: Throwable) {
-            Necron.logger.error("Error: ${error.message}")
-            wsRef.compareAndSet(ws, null)
-            stopHeartbeat()
-            if (mc.level != null) scheduleReconnect()
-        }
-    }
-
-    private fun handleRawMessage(raw: String) {
-        try {
-            val msg = gson.fromJson(raw, WebSocketManager.ServerMessage::class.java)
-            when (msg.type) {
-                "broadcast" -> onBroadcast?.invoke(msg)
-                "event" -> onEvent?.invoke(msg)
-                "player_join" -> onPlayerJoin?.invoke(msg)
-                "player_leave" -> onPlayerLeave?.invoke(msg)
-                "error" -> modMessage("§4Server: ${msg.type}")
-            }
-        } catch (e: Exception) {
-            Necron.logger.error("§4Parse error: ${e.message}")
-        }
+        client.sendEvent(eventData.eventType, data)
+        return true
     }
 }
