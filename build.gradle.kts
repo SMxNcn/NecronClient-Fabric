@@ -13,6 +13,7 @@ repositories {
     mavenCentral()
     maven("https://jitpack.io")
     maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
+    flatDir { dirs("libs") }
 }
 
 dependencies {
@@ -23,9 +24,12 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_api_version")}")
 
     modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:${property("devauth_version")}")
-    modImplementation("com.github.odtheking:odinfabric:${property("odin_version")}")
+    modImplementation(":odin-${property("odin_version")}")
+    modImplementation(":ws-core-1.0.0")
 
     modImplementation("com.github.stivais:Commodore:${property("commodore_version")}")
+
+    include(":ws-core-1.0.0")
 
     property("minecraft_lwjgl_version").let { lwjglVersion ->
         modImplementation("org.lwjgl:lwjgl-nanovg:$lwjglVersion")

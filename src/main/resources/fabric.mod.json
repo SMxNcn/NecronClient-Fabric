@@ -1,30 +1,34 @@
 {
   "schemaVersion": 1,
-  "id": "odinaddon",
+  "id": "necronclient",
   "version": "${version}",
-  "name": "OdinAddon",
-  "description": "",
-  "authors": [],
-  "contact": {},
+  "name": "NecronClient (OA)",
+  "description": "A SkyBlock Mod, but on Fabric (Base on OdinAddon)",
+  "authors": ["SMxNcn"],
+  "contact": {
+    "homepage": "https://nckim.top",
+    "sources": "https://github.com/SMxNcn/NecronClient-Fabric"
+  },
   "license": "BSD-3-Clause",
-  "icon": "assets/odinaddon/icon.png",
+  "icon": "assets/necron/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
       {
         "adapter": "kotlin",
-        "value": "com.odtheking.odinaddon.OdinAddon"
+        "value": "cn.boop.necron.Necron"
       }
     ]
   },
   "mixins": [
-    "odinaddon.mixins.json"
+    "necronclient.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric-api": ">=${fabric_api_version}",
     "minecraft": "~${minecraft_version}",
     "fabric-language-kotlin": ">=${fabric_kotlin_version}",
-    "odin": "*"
-  }
+    "odin": ">=0.1.6"
+  },
+  "custom": { "firmament:hide_from_modlist": true }
 }

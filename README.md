@@ -1,25 +1,21 @@
-# OdinFabric External Module Example
+# NecronClient (OA)
 
-This is an example project to demonstrate adding modules to [OdinFabric](https://github.com/odtheking/OdinFabric) using an external JAR.
+A mod built upon [OdinAddon](https://github.com/odtheking/OdinAddon), porting selected features from the original [NecronClient](https://github.com/SMxNcn/NecronClient).
 
-## Project Setup
+Leveraging a modified [OdinFabric](https://github.com/SMxNcn/OdinFabric), this project brings selected OdinClient features to **Minecraft 1.21.10**.
 
-To set up the project, follow the Fabric documentation for configuring your development environment:  
-https://docs.fabricmc.net/develop/getting-started/setting-up
+> [!CAUTION]
+> Some features in this mod may violate [Hypixel SkyBlock Rules](https://support.hypixel.net/hc/en-us/articles/4508088842898-Hypixel-SkyBlock-Rules).
+>
+> **Use at your own risk!**
 
-### Notes While Following the Wiki
+## 📦 Requirements
+- **Minecraft**: 1.21.11
+- **Odin**: 0.1.7
 
-- **IntelliJ IDEA is heavily recommended.**
-- When selecting a project, **clone this repository** from GitHub.
-- It should automatically add the **VM arguments required for hotswapping classes and mixins**.  
-  If not, add them manually as described in the wiki page.  
-  *(You must use the JetBrains Runtime mentioned in the wiki for this to work.)*
+## 📚 Documentation
+- **[Farming Guide](FARMING.md)** - Set up waypoints, configure actions, and automate Garden farming.
 
-## Project-Specific Notes
+## ⚖️ Disclaimer
 
-- In `gradle.properties`, set `odin-version` to the version you want to build upon.  
-  *(Both version numbers and commit hashes are supported.)*
-- Under `src/main/java`, a `mixins` directory exists — this is where all your mixins should go.
-- Under `src/main/kotlin` is your main source directory, where you can add:
-    - Modules
-    - Other code  
+This project is for educational purposes only.
