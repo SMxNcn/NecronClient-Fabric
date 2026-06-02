@@ -2,7 +2,6 @@
 package cn.boop.necron.utils
 
 import com.google.gson.JsonParser
-import com.odtheking.odin.utils.ItemRarity
 import com.odtheking.odin.utils.customData
 import com.odtheking.odin.utils.itemId
 import com.odtheking.odin.utils.loreString

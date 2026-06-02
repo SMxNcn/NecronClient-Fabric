@@ -2,7 +2,6 @@ package cn.boop.necron.utils
 
 import cn.boop.necron.mixins.accessors.KeyMappingAccessor
 import com.odtheking.odin.OdinMod.mc
-import com.odtheking.odin.utils.ItemRarity
 import com.odtheking.odin.utils.containsOneOf
 import com.odtheking.odin.utils.itemId
 import net.minecraft.client.KeyMapping
@@ -19,8 +18,6 @@ private val ncPrefix: Component = coloredChar("N", 0x44aaf8)
     .append(coloredChar("r", 0x4eddfc))
     .append(coloredChar("o", 0x52eefe))
     .append(coloredChar("n",0x55ffff))
-
-val rarityRegex = Regex("(${ItemRarity.entries.joinToString("|") { it.loreName }}) ?([A-Z ]+)?")
 
 fun modMessage(message: Any?, prefix: String = "§bNecron §8»§r §7", chatStyle: Style? = null) {
     val text = Component.literal("$prefix$message")
