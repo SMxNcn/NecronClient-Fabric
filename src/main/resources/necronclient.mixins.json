@@ -11,6 +11,7 @@
     "requireAnnotations": true
   },
   "client": [
+    "AbstractContainerScreenMixin",
     "ChatComponentMixin",
     "EntityMixin",
     "GameRendererMixin",
@@ -19,6 +20,7 @@
     "LocalPlayerMixin",
     "MinecraftMixin",
     "MouseHandlerMixin",
+    "TooltipRenderUtilMixin",
     "WindowMixin",
     "accessors.KeyMappingAccessor",
     "terminals.PanesHandlerMixin",

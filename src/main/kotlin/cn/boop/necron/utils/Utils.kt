@@ -1,15 +1,14 @@
 package cn.boop.necron.utils
 
-import cn.boop.necron.mixin.KeyMappingAccessor
+import cn.boop.necron.mixins.accessors.KeyMappingAccessor
 import com.odtheking.odin.OdinMod.mc
+import com.odtheking.odin.utils.ItemRarity
 import com.odtheking.odin.utils.containsOneOf
-import com.odtheking.odin.utils.customData
 import com.odtheking.odin.utils.itemId
 import net.minecraft.client.KeyMapping
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
 import net.minecraft.world.inventory.ClickType
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.scores.DisplaySlot
 import net.minecraft.world.scores.PlayerTeam
@@ -20,6 +19,8 @@ private val ncPrefix: Component = coloredChar("N", 0x44aaf8)
     .append(coloredChar("r", 0x4eddfc))
     .append(coloredChar("o", 0x52eefe))
     .append(coloredChar("n",0x55ffff))
+
+val rarityRegex = Regex("(${ItemRarity.entries.joinToString("|") { it.loreName }}) ?([A-Z ]+)?")
 
 fun modMessage(message: Any?, prefix: String = "§bNecron §8»§r §7", chatStyle: Style? = null) {
     val text = Component.literal("$prefix$message")
@@ -39,9 +40,6 @@ val String.clean: String
 
 val Component.cleanString: String
     get() = this.string.replace(Regex("§[0-9a-fk-or]"), "").removeSurrounding("[", "]")
-
-inline val ItemStack.itemUpgradeLevel: Int
-    get() = customData.getInt("upgrade_level").orElse(0)!!
 
 fun rightClick() {
     val key = mc.options.keyUse
