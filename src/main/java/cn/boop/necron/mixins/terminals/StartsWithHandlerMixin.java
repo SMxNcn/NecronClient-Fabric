@@ -1,7 +1,7 @@
-package cn.boop.necron.mixin.terminals;
+package cn.boop.necron.mixins.terminals;
 
 import cn.boop.necron.features.impl.necron.AutoTerms;
-import com.odtheking.odin.utils.skyblock.dungeon.terminals.terminalhandler.SelectAllHandler;
+import com.odtheking.odin.utils.skyblock.dungeon.terminals.terminalhandler.StartsWithHandler;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Mixin(SelectAllHandler.class)
-public class MixinSelectAllHandler {
+@Mixin(StartsWithHandler.class)
+public class StartsWithHandlerMixin {
 
     @Inject(method = "solve(Ljava/util/List;)Ljava/util/List;", at = @At("RETURN"), cancellable = true)
     private void onSolve(List<ItemStack> items, CallbackInfoReturnable<List<Integer>> cir) {

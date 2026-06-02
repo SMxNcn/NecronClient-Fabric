@@ -1,4 +1,4 @@
-package cn.boop.necron.mixin;
+package cn.boop.necron.mixins;
 
 import cn.boop.necron.features.impl.necron.B64Chat;
 import net.minecraft.client.gui.components.ChatComponent;
@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ChatComponent.class)
-public class MixinChatComponent {
+public class ChatComponentMixin {
 
     @Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;)V", at = @At("HEAD"), cancellable = true)
     private void onAddMessage(Component message, CallbackInfo ci) {

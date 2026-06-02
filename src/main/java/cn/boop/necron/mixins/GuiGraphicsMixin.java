@@ -1,4 +1,4 @@
-package cn.boop.necron.mixin;
+package cn.boop.necron.mixins;
 
 import cn.boop.necron.features.impl.necron.ItemStarDisplay;
 import cn.boop.necron.utils.UtilsKt;
@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GuiGraphics.class)
-public class MixinGuiGraphics {
+public class GuiGraphicsMixin {
     @Unique
     ItemStack itemStack;
 

@@ -1,4 +1,4 @@
-package cn.boop.necron.mixin;
+package cn.boop.necron.mixins;
 
 import cn.boop.necron.features.impl.necron.Nametags;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntityRenderer.class)
-public abstract class MixinLivingEntityRenderer<T extends LivingEntity> {
+public abstract class LivingEntityRendererMixin<T extends LivingEntity> {
 
     @Inject(method = "shouldShowName(Lnet/minecraft/world/entity/LivingEntity;D)Z", at = @At("HEAD"), cancellable = true)
     private void onShouldShowName(T livingEntity, double d, CallbackInfoReturnable<Boolean> cir) {

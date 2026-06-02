@@ -1,4 +1,4 @@
-package cn.boop.necron.mixin;
+package cn.boop.necron.mixins;
 
 import cn.boop.necron.features.impl.necron.Nametags;
 import net.minecraft.world.entity.Entity;
@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
-public class MixinEntity {
+public class EntityMixin {
 
     @Inject(method = "isCurrentlyGlowing", at = @At("HEAD"), cancellable = true)
     private void onIsCurrentlyGlowing(CallbackInfoReturnable<Boolean> cir) {

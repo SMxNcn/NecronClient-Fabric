@@ -1,4 +1,4 @@
-package cn.boop.necron.mixin;
+package cn.boop.necron.mixins;
 
 import cn.boop.necron.utils.RotationUtils;
 import net.minecraft.client.player.LocalPlayer;
@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LocalPlayer.class)
-public class MixinLocalPlayer {
+public class LocalPlayerMixin {
 
     @Unique private float savedYaw;
     @Unique private float savedPitch;

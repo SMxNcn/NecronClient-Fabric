@@ -1,4 +1,4 @@
-package cn.boop.necron.mixin.terminals;
+package cn.boop.necron.mixins.terminals;
 
 import cn.boop.necron.features.impl.necron.AutoTerms;
 import com.odtheking.odin.utils.skyblock.dungeon.terminals.terminalhandler.PanesHandler;
@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Mixin(PanesHandler.class)
-public class MixinPanesHandler {
+public class PanesHandlerMixin {
 
     @Inject(method = "solve(Ljava/util/List;)Ljava/util/List;", at = @At("RETURN"), cancellable = true)
     private void onSolve(List<ItemStack> items, CallbackInfoReturnable<List<Integer>> cir) {

@@ -1,4 +1,4 @@
-package cn.boop.necron.mixin;
+package cn.boop.necron.mixins;
 
 import cn.boop.necron.utils.RotationUtils;
 import com.odtheking.odin.OdinMod;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MouseHandler.class)
-public class MixinMouseHandler {
+public class MouseHandlerMixin {
 
     @Inject(method = "turnPlayer", at = @At("TAIL"))
     private void turnPlayer(CallbackInfo ci) {

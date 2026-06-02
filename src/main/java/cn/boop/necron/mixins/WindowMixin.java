@@ -1,4 +1,4 @@
-package cn.boop.necron.mixin;
+package cn.boop.necron.mixins;
 
 import cn.boop.necron.Necron;
 import cn.boop.necron.features.impl.necron.TitleManager;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Mixin(Window.class)
-public class MixinWindow {
+public class WindowMixin {
 
     @Redirect(method = "setIcon", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/IconSet;getStandardIcons(Lnet/minecraft/server/packs/PackResources;)Ljava/util/List;"))
     public List<IoSupplier<InputStream>> setCustomIcon(IconSet instance, PackResources packResources) throws IOException {

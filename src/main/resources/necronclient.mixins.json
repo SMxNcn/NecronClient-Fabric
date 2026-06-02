@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "cn.boop.necron.mixin",
+  "package": "cn.boop.necron.mixins",
   "compatibilityLevel": "JAVA_21",
   "mixins": [],
   "injectors": {
@@ -11,18 +11,18 @@
     "requireAnnotations": true
   },
   "client": [
-    "KeyMappingAccessor",
-    "MixinChatComponent",
-    "MixinEntity",
-    "MixinGameRenderer",
-    "MixinGuiGraphics",
-    "MixinLivingEntityRenderer",
-    "MixinLocalPlayer",
-    "MixinMinecraft",
-    "MixinMouseHandler",
-    "MixinWindow",
-    "terminals.MixinPanesHandler",
-    "terminals.MixinSelectAllHandler",
-    "terminals.MixinStartsWithHandler"
+    "ChatComponentMixin",
+    "EntityMixin",
+    "GameRendererMixin",
+    "GuiGraphicsMixin",
+    "LivingEntityRendererMixin",
+    "LocalPlayerMixin",
+    "MinecraftMixin",
+    "MouseHandlerMixin",
+    "WindowMixin",
+    "accessors.KeyMappingAccessor",
+    "terminals.PanesHandlerMixin",
+    "terminals.SelectAllHandlerMixin",
+    "terminals.StartsWithHandlerMixin"
   ]
 }
