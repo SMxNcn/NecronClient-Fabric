@@ -7,6 +7,7 @@ import com.odtheking.odin.utils.itemId
 import net.minecraft.client.KeyMapping
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.ClickType
 import net.minecraft.world.item.Items
 import net.minecraft.world.scores.DisplaySlot
@@ -77,21 +78,14 @@ fun findItemByID(itemID: String?, hotbar: Boolean = false): Int {
         } ?: -1
 }
 
-fun clickInventorySlot(slot: Int, containerId: Int, rightClick: Boolean = false) {
+fun Player.clickInventorySlot(slot: Int, containerId: Int, rightClick: Boolean = false) {
     if (mc.screen == null) return
-    val player = mc.player ?: return
-
-    mc.execute {
-        mc.gameMode?.handleInventoryMouseClick(containerId, slot, if (rightClick) 1 else 0, ClickType.PICKUP, player)
-    }
+    mc.gameMode?.handleInventoryMouseClick(containerId, slot, if (rightClick) 1 else 0, ClickType.PICKUP, this)
 }
 
-fun clickPlayerInventorySlot(slot: Int, containerId: Int): Boolean {
+fun Player.clickPlayerInventorySlot(slot: Int, containerId: Int): Boolean {
     if (mc.screen == null) return false
-    val player = mc.player ?: return false
-    val container = player.containerMenu
-
-    val containerSlots = container.slots.size
+    val containerSlots = containerMenu.slots.size
     val actualSlot: Int
 
     when (slot) {
@@ -108,9 +102,7 @@ fun clickPlayerInventorySlot(slot: Int, containerId: Int): Boolean {
 
     if (actualSlot !in 0 until containerSlots) return false
 
-    mc.execute {
-        mc.gameMode?.handleInventoryMouseClick(containerId, actualSlot, 0, ClickType.PICKUP, player)
-    }
+    mc.gameMode?.handleInventoryMouseClick(containerId, actualSlot, 0, ClickType.PICKUP, this)
     return true
 }
 
@@ -137,13 +129,13 @@ fun getScoreboardLines(formatted: Boolean = false): ScoreboardData? {
     if (formatted) {
         val cleanCodes = Regex("§[^0-9a-fk-or]")
         return ScoreboardData(
-            title = objective.displayName.legacy,
-            lines = components.map { it.legacy.replace(cleanCodes, "") }
+            objective.displayName.legacy,
+            components.map { it.legacy.replace(cleanCodes, "") }
         )
     }
     return ScoreboardData(
-        title = objective.displayName.cleanString,
-        lines = components.map { it.cleanString }
+        objective.displayName.cleanString,
+        components.map { it.cleanString }
     )
 }
 

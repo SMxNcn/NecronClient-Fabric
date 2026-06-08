@@ -56,8 +56,8 @@ object FarmingHelper : Module(
         CropNuker.toggleNuker()
     }
 
-    private val isJacobActive: Boolean
-        get() = getScoreboard().any { it.contains("Jacob's Contest") }
+    val isJacobActive: Boolean
+        get() = getScoreboardLines()?.lines?.any { it.contains("Jacob's Contest") } ?: false
 
     private val blossomIds: List<String>
         get() =
@@ -151,7 +151,7 @@ object FarmingHelper : Module(
                         sendCommand("tptoplot $plot")
                         if (killAtDisco) {
                             delay(randomDelay(1200, 400))
-                            val slot = findItemByID(specialItemList[3], true)
+                            val slot = findItemByID(specialItemList[2], true)
                             if (slot != -1 && slot in 0..9) {
                                 player.inventory.selectedSlot = slot
                                 delay(randomDelay(100, 100))
@@ -183,9 +183,9 @@ object FarmingHelper : Module(
                 mc.options.keyShift.isDown = false
                 if (changeTimeOnPest) changeGardenTime(true) // Change time to Night
 
-                delay(randomDelay(550, 100))
+                delay(randomDelay(200, 100))
                 player.inventory.selectedSlot = if (lastHeldSlot == -1) 0 else lastHeldSlot
-                delay(randomDelay(450, 50))
+                delay(randomDelay(100, 50))
                 CropNuker.start()
             }
         }
@@ -216,11 +216,12 @@ object FarmingHelper : Module(
         delay(randomDelay(200, 100))
         sendCommand("desk")
         delay(randomDelay(600, 100))
-        clickInventorySlot(50, containerId)
+        mc.player?.clickInventorySlot(50, containerId)
         delay(randomDelay(600, 100))
         val slot = if (toNight) 13 else 11
-        clickInventorySlot(slot, containerId)
+        mc.player?.clickInventorySlot(slot, containerId)
         delay(randomDelay(600, 100))
-        clickInventorySlot(31, containerId)
+        mc.player?.clickInventorySlot(31, containerId)
+        delay(randomDelay(250, 50))
     }
 }

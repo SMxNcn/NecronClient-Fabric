@@ -10,6 +10,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+import net.minecraft.network.protocol.game.ServerboundContainerClosePacket
 import kotlin.coroutines.resume
 
 object WardrobeUtils {
@@ -38,6 +39,7 @@ object WardrobeUtils {
      * @return `true` if the armor was successfully equipped, `false` otherwise.
      */
     suspend fun swapArmorTo(index: Int, page: Int = 1): Boolean {
+        if (calledFromThis || isProcessing) return false
         if (index !in 1..9 || page !in 1..3) return false
 
         return try {
@@ -69,7 +71,7 @@ object WardrobeUtils {
             if (currentPage == targetPage) {
                 clickArmor()
             } else if (currentPage < targetPage) {
-                clickInventorySlot(NEXT_PAGE_SLOT, containerId)
+                mc.player?.clickInventorySlot(NEXT_PAGE_SLOT, containerId)
                 isProcessing = false
             }
         }
@@ -77,10 +79,11 @@ object WardrobeUtils {
 
     private fun clickArmor() {
         isProcessing = true
-        clickInventorySlot(targetSlot, containerId)
+        mc.player?.clickInventorySlot(targetSlot, containerId)
 
         schedule((8..10).random()) {
-            mc.player?.closeContainer()
+            mc.player?.connection?.send(ServerboundContainerClosePacket(containerId))
+            mc.setScreen(null)
             callback?.invoke(true)
             reset()
         }
