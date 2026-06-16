@@ -25,7 +25,7 @@ object AutoTerms : Module(
     private var firstClick = true
 
     init {
-        on<GuiEvent.DrawBackground> {
+        on<GuiEvent.Render> {
             val term = TerminalUtils.currentTerm ?: return@on
             with (term) {
                 if (firstClick && (System.currentTimeMillis() - lastClickTime < firstClickDelay)) return@on

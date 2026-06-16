@@ -5,6 +5,7 @@ import cn.boop.necron.utils.clean
 import com.odtheking.odin.clickgui.settings.impl.BooleanSetting
 import com.odtheking.odin.clickgui.settings.impl.NumberSetting
 import com.odtheking.odin.events.GuiEvent
+import com.odtheking.odin.events.ScreenEvent
 import com.odtheking.odin.events.TickEvent
 import com.odtheking.odin.events.core.on
 import com.odtheking.odin.features.Module
@@ -29,7 +30,7 @@ object AutoExperiments: Module (
     private var lastClickTime = 0L
 
     init {
-        on<GuiEvent.Open> {
+        on<ScreenEvent.Open> {
             val title = screen.title.string
 
             handler = when {

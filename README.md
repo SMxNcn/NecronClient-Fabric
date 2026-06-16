@@ -2,7 +2,7 @@
 
 A mod built upon [OdinAddon](https://github.com/odtheking/OdinAddon), porting selected features from the original [NecronClient](https://github.com/SMxNcn/NecronClient).
 
-Leveraging a modified [OdinFabric](https://github.com/SMxNcn/OdinFabric), this project brings selected OdinClient features to **Minecraft 1.21.10**.
+Leveraging a modified [OdinFabric](https://github.com/SMxNcn/OdinFabric), this project brings selected OdinClient features to **Minecraft 1.21.11**.
 
 > [!CAUTION]
 > Some features in this mod may violate [Hypixel SkyBlock Rules](https://support.hypixel.net/hc/en-us/articles/4508088842898-Hypixel-SkyBlock-Rules).
@@ -11,7 +11,7 @@ Leveraging a modified [OdinFabric](https://github.com/SMxNcn/OdinFabric), this p
 
 ## 📦 Requirements
 - **Minecraft**: 1.21.11
-- **Odin**: 0.1.7
+- **Odin**: 0.2.1
 
 ## 📚 Documentation
 - **[Farming Guide](FARMING.md)** - Set up waypoints, configure actions, and automate Garden farming.

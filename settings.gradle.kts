@@ -1,4 +1,4 @@
-rootProject.name = "OdinAddon"
+rootProject.name = "NClient"
 
 pluginManagement {
     repositories {

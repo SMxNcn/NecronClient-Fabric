@@ -2,8 +2,8 @@ package cn.boop.necron.features.impl.necron
 
 import cn.boop.necron.utils.NCategory
 import com.odtheking.odin.clickgui.settings.impl.SelectorSetting
-import com.odtheking.odin.events.GuiEvent
 import com.odtheking.odin.events.PacketEvent
+import com.odtheking.odin.events.ScreenEvent
 import com.odtheking.odin.events.core.on
 import com.odtheking.odin.features.Module
 import com.odtheking.odin.utils.equalsOneOf
@@ -32,7 +32,7 @@ object AutoCloseChest : Module(
             }
         }
 
-        on<GuiEvent.MouseClick> {
+        on<ScreenEvent.MouseClick> {
             if (mode != 1 || !inDungeons) return@on
 
             var title = screen.title.string
@@ -41,7 +41,7 @@ object AutoCloseChest : Module(
             if (isSecretChest) mc.player?.closeContainer()
         }
 
-        on<GuiEvent.KeyPress> {
+        on<ScreenEvent.KeyPress> {
             if (mode != 1 || !inDungeons) return@on
 
             var title = screen.title.string

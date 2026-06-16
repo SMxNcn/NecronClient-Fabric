@@ -9,13 +9,9 @@ import com.odtheking.odin.clickgui.settings.impl.DropdownSetting
 import com.odtheking.odin.events.RenderEvent
 import com.odtheking.odin.events.core.on
 import com.odtheking.odin.features.Module
-import com.odtheking.odin.utils.Color
+import com.odtheking.odin.utils.*
 import com.odtheking.odin.utils.render.drawStyledBox
 import com.odtheking.odin.utils.render.drawText
-import com.odtheking.odin.utils.renderBoundingBox
-import com.odtheking.odin.utils.renderX
-import com.odtheking.odin.utils.renderY
-import com.odtheking.odin.utils.renderZ
 import com.odtheking.odin.utils.skyblock.Island
 import com.odtheking.odin.utils.skyblock.LocationUtils
 import com.odtheking.odin.utils.skyblock.dungeon.DungeonClass
@@ -89,7 +85,7 @@ object Nametags : Module(
                 "§7[?] $playerName"
             }
         } else {
-            if (renderDistance) "${entity.displayName.legacy} §7${distance}m" else "${entity.displayName.legacy}"
+            if (renderDistance) "${entity.displayName.legacy} §7${distance}m" else entity.displayName.legacy
         }
     }
 
@@ -101,22 +97,22 @@ object Nametags : Module(
 
     private fun getDungeonClassColor(clazz: DungeonClass): Color {
         return when (clazz) {
-            DungeonClass.Archer -> Color(255, 85, 85)
-            DungeonClass.Berserk -> Color(255, 170, 0)
-            DungeonClass.Healer -> Color(255, 85, 255)
-            DungeonClass.Mage -> Color(85, 255, 255)
-            DungeonClass.Tank -> Color(0, 170, 0)
+            DungeonClass.ARCHER -> Color(255, 85, 85)
+            DungeonClass.BERSERK -> Color(255, 170, 0)
+            DungeonClass.HEALER -> Color(255, 85, 255)
+            DungeonClass.MAGE -> Color(85, 255, 255)
+            DungeonClass.TANK -> Color(0, 170, 0)
             else -> Color(170, 170, 170)
         }
     }
 
     private fun getClassColorCode(clazz: DungeonClass): String {
         return when (clazz) {
-            DungeonClass.Archer -> "§c"
-            DungeonClass.Berserk -> "§6"
-            DungeonClass.Healer -> "§d"
-            DungeonClass.Mage -> "§b"
-            DungeonClass.Tank -> "§a"
+            DungeonClass.ARCHER -> "§c"
+            DungeonClass.BERSERK -> "§6"
+            DungeonClass.HEALER -> "§d"
+            DungeonClass.MAGE -> "§b"
+            DungeonClass.TANK -> "§a"
             else -> "§7"
         }
     }

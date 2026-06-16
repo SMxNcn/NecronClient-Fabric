@@ -6,11 +6,10 @@ import cn.boop.necron.utils.network.MayorData
 import cn.boop.necron.utils.network.MayorData.pestSpawnCooldown
 import cn.boop.necron.utils.network.WSClient
 import cn.boop.necron.utils.rng.DungeonRngEventHandler
-import cn.boop.necron.utils.rng.MeterType
 import cn.boop.necron.utils.rng.SlayerRngEventHandler
 import com.odtheking.odin.OdinMod.mc
 import com.odtheking.odin.events.ChatPacketEvent
-import com.odtheking.odin.events.GuiEvent
+import com.odtheking.odin.events.ScreenEvent
 import com.odtheking.odin.events.TickEvent
 import com.odtheking.odin.events.WorldEvent
 import com.odtheking.odin.events.core.on
@@ -82,7 +81,7 @@ object CustomEventDispatcher {
             }
         }
 
-        on<GuiEvent.Open> {
+        on<ScreenEvent.Open> {
             val chest = (screen as? AbstractContainerScreen<*>) ?: return@on
             schedule(3) {
                 if (mc.screen != chest) return@schedule
@@ -91,14 +90,6 @@ object CustomEventDispatcher {
                     SlayerRngEventHandler.handleGui(chest)
                 }
             }
-        }
-
-        on<RngEvent.ItemSelected> {
-            val displayName = when (type) {
-                MeterType.DUNGEON -> "Catacombs §8(${key}§8)"
-                MeterType.SLAYER -> key
-            }
-            modMessage("§aSet RNG Meter §ato drop §6${item}§a for §d$displayName§a!")
         }
 
         on<RngEvent.MeterReset> {

@@ -1,7 +1,7 @@
 package cn.boop.necron.utils
 
 import com.odtheking.odin.OdinMod.mc
-import com.odtheking.odin.events.GuiEvent
+import com.odtheking.odin.events.ScreenEvent
 import com.odtheking.odin.events.core.on
 import com.odtheking.odin.utils.handlers.schedule
 import com.odtheking.odin.utils.sendCommand
@@ -20,7 +20,7 @@ object EquipmentUtils {
     private var calledFromThis = false
 
     init {
-        on<GuiEvent.Open> {
+        on<ScreenEvent.Open> {
             containerId = mc.player?.containerMenu?.containerId ?: return@on
             if (!calledFromThis || isProcessing) return@on
             handleGuiOpen(screen)

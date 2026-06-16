@@ -10,8 +10,8 @@ import com.odtheking.odin.clickgui.settings.Setting.Companion.withDependency
 import com.odtheking.odin.clickgui.settings.impl.BooleanSetting
 import com.odtheking.odin.clickgui.settings.impl.StringSetting
 import com.odtheking.odin.events.ChatPacketEvent
-import com.odtheking.odin.events.GuiEvent
 import com.odtheking.odin.events.InputEvent
+import com.odtheking.odin.events.ScreenEvent
 import com.odtheking.odin.events.core.on
 import com.odtheking.odin.features.Module
 import com.odtheking.odin.utils.equalsOneOf
@@ -49,7 +49,7 @@ object AutoLeap : Module(
             }
         }
 
-        on<GuiEvent.Open> {
+        on<ScreenEvent.Open> {
             val chest = (screen as? AbstractContainerScreen<*>) ?: return@on
             inLeapGui = chest.title.string.equalsOneOf("Spirit Leap", "Teleport to Player")
             if (!DungeonUtils.inDungeons || !inLeapGui || !shouldAutoLeap) return@on
@@ -110,7 +110,7 @@ object AutoLeap : Module(
         val myPlayer = DungeonUtils.currentDungeonPlayer
         val myClass = myPlayer.clazz
 
-        if (myClass != DungeonClass.Mage && myClass != DungeonClass.Archer) return null
+        if (myClass != DungeonClass.MAGE && myClass != DungeonClass.ARCHER) return null
 
         val doorOpenerName = DungeonUtils.doorOpener
         if (doorOpenerName.isNotBlank()) {
@@ -121,8 +121,8 @@ object AutoLeap : Module(
         }
 
         val teammateToLeap = when (myClass) {
-            DungeonClass.Archer -> DungeonUtils.dungeonTeammates.find { it.clazz == DungeonClass.Mage }
-            DungeonClass.Mage -> DungeonUtils.dungeonTeammates.find { it.clazz == DungeonClass.Archer }
+            DungeonClass.ARCHER -> DungeonUtils.dungeonTeammates.find { it.clazz == DungeonClass.MAGE }
+            DungeonClass.MAGE -> DungeonUtils.dungeonTeammates.find { it.clazz == DungeonClass.ARCHER }
         }
 
         return teammateToLeap?.clazz
@@ -146,99 +146,99 @@ object AutoLeap : Module(
 
     private fun queryRule(sourceClass: DungeonClass, phase: M7Phases, p3Stage: P3Stages, isCore: Boolean = false): DungeonClass? {
         return when (sourceClass) {
-            DungeonClass.Archer -> when (phase) {
-                M7Phases.P1 -> DungeonClass.Berserk
-                M7Phases.P2 -> DungeonClass.Healer
+            DungeonClass.ARCHER -> when (phase) {
+                M7Phases.P1 -> DungeonClass.BERSERK
+                M7Phases.P2 -> DungeonClass.HEALER
                 M7Phases.P3 -> when (p3Stage) {
                     P3Stages.S1 -> null
-                    P3Stages.S2 -> DungeonClass.Healer
+                    P3Stages.S2 -> DungeonClass.HEALER
                     P3Stages.S3 -> {
-                        if (isCore) DungeonClass.Mage
+                        if (isCore) DungeonClass.MAGE
                         else null
                     }
-                    P3Stages.S4 -> DungeonClass.Mage
-                    P3Stages.Tunnel -> DungeonClass.Healer
+                    P3Stages.S4 -> DungeonClass.MAGE
+                    P3Stages.Tunnel -> DungeonClass.HEALER
                     else -> null
                 }
-                M7Phases.P4 -> DungeonClass.Healer
+                M7Phases.P4 -> DungeonClass.HEALER
                 M7Phases.P5 -> null
                 else -> null
             }
 
-            DungeonClass.Berserk -> when (phase) {
+            DungeonClass.BERSERK -> when (phase) {
                 M7Phases.P1 -> null
-                M7Phases.P2 -> DungeonClass.Healer
+                M7Phases.P2 -> DungeonClass.HEALER
                 M7Phases.P3 -> when (p3Stage) {
-                    P3Stages.S1 -> DungeonClass.Archer
-                    P3Stages.S2 -> DungeonClass.Healer
+                    P3Stages.S1 -> DungeonClass.ARCHER
+                    P3Stages.S2 -> DungeonClass.HEALER
                     P3Stages.S3 -> {
-                        if (isCore) DungeonClass.Mage
-                        else DungeonClass.Archer
+                        if (isCore) DungeonClass.MAGE
+                        else DungeonClass.ARCHER
                     }
-                    P3Stages.S4 -> DungeonClass.Mage
-                    P3Stages.Tunnel -> DungeonClass.Healer
+                    P3Stages.S4 -> DungeonClass.MAGE
+                    P3Stages.Tunnel -> DungeonClass.HEALER
                     else -> null
                 }
-                M7Phases.P4 -> DungeonClass.Healer
+                M7Phases.P4 -> DungeonClass.HEALER
                 M7Phases.P5 -> null
                 else -> null
             }
 
-            DungeonClass.Healer -> when (phase) {
+            DungeonClass.HEALER -> when (phase) {
                 M7Phases.P1 -> null
-                M7Phases.P2 -> DungeonClass.Archer
+                M7Phases.P2 -> DungeonClass.ARCHER
                 M7Phases.P3 -> when (p3Stage) {
-                    P3Stages.S1 -> DungeonClass.Archer
+                    P3Stages.S1 -> DungeonClass.ARCHER
                     P3Stages.S2 -> null
                     P3Stages.S3 -> {
-                        if (isCore) DungeonClass.Mage
-                        else DungeonClass.Archer
+                        if (isCore) DungeonClass.MAGE
+                        else DungeonClass.ARCHER
                     }
-                    P3Stages.S4 -> DungeonClass.Mage
+                    P3Stages.S4 -> DungeonClass.MAGE
                     P3Stages.Tunnel -> null
                     else -> null
                 }
                 M7Phases.P4 -> null
-                M7Phases.P5 -> DungeonClass.Berserk
+                M7Phases.P5 -> DungeonClass.BERSERK
                 else -> null
             }
 
-            DungeonClass.Mage -> when (phase) {
-                M7Phases.P1 -> DungeonClass.Berserk
-                M7Phases.P2 -> DungeonClass.Healer
+            DungeonClass.MAGE -> when (phase) {
+                M7Phases.P1 -> DungeonClass.BERSERK
+                M7Phases.P2 -> DungeonClass.HEALER
                 M7Phases.P3 -> when (p3Stage) {
-                    P3Stages.S1 -> DungeonClass.Archer
-                    P3Stages.S2 -> DungeonClass.Healer
+                    P3Stages.S1 -> DungeonClass.ARCHER
+                    P3Stages.S2 -> DungeonClass.HEALER
                     P3Stages.S3 -> null
                     P3Stages.S4 -> null
-                    P3Stages.Tunnel -> DungeonClass.Healer
+                    P3Stages.Tunnel -> DungeonClass.HEALER
                     else -> null
                 }
-                M7Phases.P4 -> DungeonClass.Healer
-                M7Phases.P5 -> DungeonClass.Berserk
+                M7Phases.P4 -> DungeonClass.HEALER
+                M7Phases.P5 -> DungeonClass.BERSERK
                 else -> null
             }
 
-            DungeonClass.Tank -> when (phase) {
-                M7Phases.P1 -> DungeonClass.Berserk
-                M7Phases.P2 -> DungeonClass.Healer
+            DungeonClass.TANK -> when (phase) {
+                M7Phases.P1 -> DungeonClass.BERSERK
+                M7Phases.P2 -> DungeonClass.HEALER
                 M7Phases.P3 -> when (p3Stage) {
-                    P3Stages.S1 -> DungeonClass.Archer
-                    P3Stages.S2 -> DungeonClass.Healer
+                    P3Stages.S1 -> DungeonClass.ARCHER
+                    P3Stages.S2 -> DungeonClass.HEALER
                     P3Stages.S3 -> {
-                        if (isCore) DungeonClass.Mage
-                        else DungeonClass.Archer
+                        if (isCore) DungeonClass.MAGE
+                        else DungeonClass.ARCHER
                     }
-                    P3Stages.S4 -> DungeonClass.Mage
-                    P3Stages.Tunnel -> DungeonClass.Healer
+                    P3Stages.S4 -> DungeonClass.MAGE
+                    P3Stages.Tunnel -> DungeonClass.HEALER
                     else -> null
                 }
-                M7Phases.P4 -> DungeonClass.Healer
-                M7Phases.P5 -> DungeonClass.Archer
+                M7Phases.P4 -> DungeonClass.HEALER
+                M7Phases.P5 -> DungeonClass.ARCHER
                 else -> null
             }
 
-            DungeonClass.Unknown -> null
+            DungeonClass.EMPTY -> null
         }
     }
 }

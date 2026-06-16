@@ -158,7 +158,7 @@ object Auto4 : Module (
             }
         }
 
-        on<GuiEvent.Open> {
+        on<ScreenEvent.Open> {
             val chest = (screen as? AbstractContainerScreen<*>) ?: return@on
             if (!isI4Leap) return@on
             val inLeapGui = chest.title.string.equalsOneOf("Spirit Leap", "Teleport to Player")
@@ -234,11 +234,11 @@ object Auto4 : Module (
 
     private fun leapBack(screen: AbstractContainerScreen<*>) {
         val targetClass = dungeonTeammates.find { !it.isDead && it.clazz == when(leapTarget) {
-            0 -> DungeonClass.Archer
-            1 -> DungeonClass.Berserk
-            2 -> DungeonClass.Healer
-            3 -> DungeonClass.Mage
-            else -> DungeonClass.Tank
+            0 -> DungeonClass.ARCHER
+            1 -> DungeonClass.BERSERK
+            2 -> DungeonClass.HEALER
+            3 -> DungeonClass.MAGE
+            else -> DungeonClass.TANK
         } }
 
         targetClass?.name?.let { leapTo(it, screen) }

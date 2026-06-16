@@ -9,7 +9,7 @@ import cn.boop.necron.utils.waypoints.FarmingWaypoints
 import com.odtheking.odin.OdinMod
 import com.odtheking.odin.clickgui.settings.Setting.Companion.withDependency
 import com.odtheking.odin.clickgui.settings.impl.*
-import com.odtheking.odin.events.GuiEvent
+import com.odtheking.odin.events.ScreenEvent
 import com.odtheking.odin.events.InputEvent
 import com.odtheking.odin.events.RenderEvent
 import com.odtheking.odin.events.TickEvent
@@ -194,7 +194,7 @@ object FarmingHelper : Module(
             if (autoKick) schedule(2) { sendCommand("sbkick $player") }
         }
 
-        on<GuiEvent.Open> {
+        on<ScreenEvent.Open> {
             if (CropNuker.enabled || ignorePests || !changeTimeOnPest) return@on
             val chest = (screen as? AbstractContainerScreen<*>) ?: return@on
             if (!chest.title.cleanString.containsOneOf("Desk", "Garden Time", "Pesthunter")) return@on

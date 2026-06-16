@@ -6,7 +6,7 @@ import net.minecraft.core.BlockPos
 
 object MageCoreCheck {
     fun checkIfMageIsCore(): Boolean {
-        val mage = dungeonTeammates.find { it.clazz == DungeonClass.Mage && !it.isDead } ?: return false
+        val mage = dungeonTeammates.find { it.clazz == DungeonClass.MAGE && !it.isDead } ?: return false
 
         val mageEntity = mage.entity ?: return false
         val magePos = BlockPos(

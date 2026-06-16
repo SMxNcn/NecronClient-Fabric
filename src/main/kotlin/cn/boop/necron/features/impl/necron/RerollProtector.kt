@@ -8,6 +8,7 @@ import cn.boop.necron.utils.network.WebSocketMessageHandler.handleChestReward
 import com.odtheking.odin.clickgui.settings.impl.BooleanSetting
 import com.odtheking.odin.clickgui.settings.impl.StringSetting
 import com.odtheking.odin.events.GuiEvent
+import com.odtheking.odin.events.ScreenEvent
 import com.odtheking.odin.events.WorldEvent
 import com.odtheking.odin.events.core.on
 import com.odtheking.odin.features.Module
@@ -63,7 +64,7 @@ object RerollProtector : Module(
     )
 
     init {
-        on<GuiEvent.Open> {
+        on<ScreenEvent.Open> {
             if (!(DungeonUtils.inDungeons || KuudraUtils.inKuudra) || LocationUtils.currentArea == Island.DungeonHub) return@on
             val chest = (screen as? AbstractContainerScreen<*>) ?: return@on
             if (lastCheckedChest != chest.title.string) {
@@ -92,7 +93,7 @@ object RerollProtector : Module(
             }
         }
 
-        on<GuiEvent.Close> {
+        on<ScreenEvent.Close> {
             resetState()
             lastCheckedChest = null
         }

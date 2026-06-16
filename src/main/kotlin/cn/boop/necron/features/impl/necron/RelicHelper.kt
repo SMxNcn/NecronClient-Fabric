@@ -62,7 +62,7 @@ object RelicHelper : Module(
         on<RenderEvent.Extract> {
             if (DungeonUtils.getF7Phase() != M7Phases.P5 || !lookingCauldron || !relicLook) return@on
             val player = mc.player ?: return@on
-            if (targetVec != null && ((currentClass == DungeonClass.Archer || currentClass == DungeonClass.Berserk))) {
+            if (targetVec != null && ((currentClass == DungeonClass.ARCHER || currentClass == DungeonClass.BERSERK))) {
                 val targetRot = vec3ToRotation(targetVec!!)
                 currentYaw = exponentialSmooth(currentYaw, targetRot.yaw, 0.5f)
                 currentPitch = exponentialSmooth(currentPitch, targetRot.pitch, 0.5f)
